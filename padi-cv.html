@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marco Rossi – PADI Master Scuba Diver Trainer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ocean: {
+              950: '#010b18',
+              900: '#03111f',
+              800: '#042236',
+              700: '#073552',
+              600: '#0a4a70',
+              500: '#0e6494',
+              400: '#1280bc',
+              300: '#2da4de',
+              200: '#6cc4eb',
+              100: '#b3def5',
+              50:  '#e8f6fd',
+            },
+            aqua: {
+              400: '#2de0c8',
+              300: '#5eebd8',
+              200: '#96f2e7',
+            },
+            sand: '#f0e6d3',
+          },
+          fontFamily: {
+            display: ['Cormorant Garamond', 'serif'],
+            body: ['DM Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          animation: {
+            'bubble-1': 'bubble 8s ease-in infinite',
+            'bubble-2': 'bubble 11s ease-in infinite 2s',
+            'bubble-3': 'bubble 7s ease-in infinite 4s',
+            'bubble-4': 'bubble 13s ease-in infinite 1s',
+            'bubble-5': 'bubble 9s ease-in infinite 6s',
+            'bubble-6': 'bubble 15s ease-in infinite 3s',
+            'wave': 'wave 6s ease-in-out infinite',
+            'wave2': 'wave 8s ease-in-out infinite reverse',
+            'float': 'float 5s ease-in-out infinite',
+            'fade-up': 'fadeUp 0.8s ease forwards',
+            'shimmer': 'shimmer 3s ease-in-out infinite',
+          },
+          keyframes: {
+            bubble: {
+              '0%':   { transform: 'translateY(0) scale(1)', opacity: '0' },
+              '10%':  { opacity: '0.6' },
+              '90%':  { opacity: '0.3' },
+              '100%': { transform: 'translateY(-100vh) scale(1.4)', opacity: '0' },
+            },
+            wave: {
+              '0%,100%': { transform: 'translateX(0)' },
+              '50%': { transform: 'translateX(-5%)' },
+            },
+            float: {
+              '0%,100%': { transform: 'translateY(0px) rotate(-1deg)' },
+              '50%': { transform: 'translateY(-12px) rotate(1deg)' },
+            },
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            shimmer: {
+              '0%,100%': { opacity: '0.6' },
+              '50%': { opacity: '1' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: #010b18; color: #e8f6fd; overflow-x: hidden; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #010b18; }
+    ::-webkit-scrollbar-thumb { background: #1280bc; border-radius: 99px; }
+
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* Stagger delays */
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
+    .delay-3 { transition-delay: 0.3s; }
+    .delay-4 { transition-delay: 0.4s; }
+    .delay-5 { transition-delay: 0.5s; }
+
+    /* Noise texture overlay */
+    .noise::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; opacity: 0.5;
+    }
+
+    /* Bubble positions */
+    .bubble { position: absolute; border-radius: 50%; border: 1px solid rgba(45,224,200,0.3); background: rgba(45,224,200,0.04); pointer-events: none; }
+
+    /* Nav blur */
+    .nav-scrolled { background: rgba(1,11,24,0.85) !important; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(18,128,188,0.15); }
+
+    /* Timeline line */
+    .timeline-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, #1280bc 10%, #1280bc 90%, transparent); transform: translateX(-50%); }
+
+    /* Card hover */
+    .cert-card { perspective: 1000px; }
+    .cert-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .cert-card:hover .cert-inner { transform: rotateY(180deg); }
+    .cert-front, .cert-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .cert-back { transform: rotateY(180deg); position: absolute; inset: 0; }
+
+    /* Skill bar */
+    .skill-fill { width: 0; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+    /* Section divider wave */
+    .wave-divider svg { display: block; }
+
+    /* Gradient text */
+    .text-gradient {
+      background: linear-gradient(135deg, #6cc4eb 0%, #2de0c8 50%, #6cc4eb 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Counter */
+    .stat-num { font-variant-numeric: tabular-nums; }
+
+    /* Glow effect */
+    .glow { box-shadow: 0 0 30px rgba(45,224,200,0.15), 0 0 60px rgba(18,128,188,0.1); }
+
+    /* Active nav */
+    .nav-link.active { color: #2de0c8; }
+
+    @media (max-width: 768px) {
+      .timeline-line { left: 20px; }
+      .timeline-item-left, .timeline-item-right { padding-left: 50px !important; padding-right: 0 !important; text-align: left !important; }
+      .timeline-dot { left: 14px !important; right: auto !important; }
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <!-- ═══════════════════════════════════════════ NAVBAR ═══ -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-5 px-8">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <a href="#hero" class="font-display text-xl font-semibold tracking-wide text-ocean-100">
+        MR<span class="text-aqua-400">.</span>
+      </a>
+      <ul class="hidden md:flex gap-8 text-sm font-body font-medium tracking-widest uppercase text-ocean-200">
+        <li><a href="#about"   class="nav-link hover:text-aqua-400 transition-colors">Über mich</a></li>
+        <li><a href="#cv"      class="nav-link hover:text-aqua-400 transition-colors">Lebenslauf</a></li>
+        <li><a href="#certs"   class="nav-link hover:text-aqua-400 transition-colors">Zertifikate</a></li>
+        <li><a href="#skills"  class="nav-link hover:text-aqua-400 transition-colors">Skills</a></li>
+        <li><a href="#contact" class="nav-link hover:text-aqua-400 transition-colors">Kontakt</a></li>
+      </ul>
+      <a href="#contact" class="hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full border border-aqua-400/40 text-aqua-400 text-sm font-medium hover:bg-aqua-400/10 transition-all duration-300">
+        Kontakt aufnehmen
+      </a>
+      <!-- Mobile menu button -->
+      <button id="mob-menu-btn" class="md:hidden text-ocean-100 p-2">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="19" y2="6"/><line x1="3" y1="11" x2="19" y2="11"/><line x1="3" y1="16" x2="19" y2="16"/>
+        </svg>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <div id="mob-menu" class="hidden md:hidden mt-4 mx-4 rounded-2xl bg-ocean-800/90 backdrop-blur-xl border border-ocean-600/30 p-6">
+      <ul class="flex flex-col gap-4 text-sm font-medium tracking-wider uppercase text-ocean-100">
+        <li><a href="#about"   onclick="closeMob()">Über mich</a></li>
+        <li><a href="#cv"      onclick="closeMob()">Lebenslauf</a></li>
+        <li><a href="#certs"   onclick="closeMob()">Zertifikate</a></li>
+        <li><a href="#skills"  onclick="closeMob()">Skills</a></li>
+        <li><a href="#contact" onclick="closeMob()">Kontakt</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════════ HERO ═══ -->
+  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden noise">
+    <!-- Deep gradient bg -->
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 30% 60%, #073552 0%, #042236 30%, #010b18 70%);"></div>
+
+    <!-- Animated light ray -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full opacity-20" style="background: linear-gradient(to bottom, transparent, #2de0c8, transparent);"></div>
+    <div class="absolute top-0 left-1/3 w-px h-3/4 opacity-10" style="background: linear-gradient(to bottom, #6cc4eb, transparent);"></div>
+    <div class="absolute top-0 right-1/4 w-px h-2/3 opacity-10" style="background: linear-gradient(to bottom, #2da4de, transparent);"></div>
+
+    <!-- Bubbles -->
+    <div class="bubble animate-bubble-1" style="width:8px;height:8px;left:15%;bottom:-20px;animation-duration:9s;"></div>
+    <div class="bubble animate-bubble-2" style="width:5px;height:5px;left:25%;bottom:-20px;animation-duration:12s;"></div>
+    <div class="bubble animate-bubble-3" style="width:12px;height:12px;left:40%;bottom:-20px;animation-duration:8s;"></div>
+    <div class="bubble animate-bubble-4" style="width:6px;height:6px;left:55%;bottom:-20px;animation-duration:14s;"></div>
+    <div class="bubble animate-bubble-5" style="width:10px;height:10px;left:70%;bottom:-20px;animation-duration:10s;"></div>
+    <div class="bubble animate-bubble-6" style="width:4px;height:4px;left:80%;bottom:-20px;animation-duration:16s;"></div>
+    <div class="bubble" style="width:7px;height:7px;left:90%;bottom:-20px;animation:bubble 11s ease-in infinite 7s;"></div>
+    <div class="bubble" style="width:9px;height:9px;left:5%;bottom:-20px;animation:bubble 13s ease-in infinite 5s;"></div>
+
+    <!-- Wave bottom -->
+    <div class="absolute bottom-0 left-0 right-0 wave-divider">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style="width:100%;height:80px;">
+        <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,80 L0,80 Z" fill="#010b18"/>
+      </svg>
+    </div>
+
+    <!-- Hero content -->
+    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+      <!-- Diver icon -->
+      <div class="animate-float mb-8 inline-block">
+        <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-5xl glow" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(45,224,200,0.3);">
+          🤿
+        </div>
+      </div>
+
+      <p class="font-mono text-aqua-400 text-sm tracking-[0.3em] uppercase mb-4 animate-shimmer" style="animation-delay:0.2s">
+        PADI Master Scuba Diver Trainer · #A-1234567
+      </p>
+
+      <h1 class="font-display font-light text-ocean-50 leading-none mb-3" style="font-size: clamp(3rem, 9vw, 7rem); letter-spacing: -0.02em;">
+        Marco
+      </h1>
+      <h1 class="font-display font-semibold text-gradient leading-none mb-8" style="font-size: clamp(3rem, 9vw, 7rem); letter-spacing: -0.02em;">
+        Rossi
+      </h1>
+
+      <p class="font-body text-ocean-200 text-lg font-light max-w-xl mx-auto mb-12 leading-relaxed" style="animation: fadeUp 1s 0.5s ease both;">
+        Leidenschaftlicher Tauchlehrer mit über 12 Jahren Erfahrung. Spezialist für Überwasser-Navigation, Wracktauchen und Tieftauchgänge in den schönsten Meeren der Welt.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center" style="animation: fadeUp 1s 0.8s ease both;">
+        <a href="#cv" class="px-8 py-3.5 rounded-full font-body font-medium text-sm tracking-wide transition-all duration-300 hover:scale-105"
+           style="background: linear-gradient(135deg, #0e6494, #1280bc); border: 1px solid rgba(45,224,200,0.2); box-shadow: 0 8px 32px rgba(14,100,148,0.4);">
+          Lebenslauf ansehen
+        </a>
+        <a href="#contact" class="px-8 py-3.5 rounded-full font-body font-medium text-sm tracking-wide border border-aqua-400/40 text-aqua-400 hover:bg-aqua-400/10 transition-all duration-300 hover:scale-105">
+          Kontakt aufnehmen
+        </a>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="absolute bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+        <span class="font-mono text-xs tracking-widest uppercase text-ocean-200">Scroll</span>
+        <div class="w-px h-12 bg-gradient-to-b from-ocean-300 to-transparent"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ ABOUT ═══ -->
+  <section id="about" class="relative py-32 px-6 overflow-hidden" style="background: #010b18;">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <!-- Left: Photo -->
+        <div class="reveal-left">
+          <div class="relative">
+            <!-- Decorative frame -->
+            <div class="absolute -top-4 -left-4 w-full h-full rounded-3xl border border-ocean-600/40"></div>
+            <div class="absolute -top-8 -left-8 w-32 h-32 rounded-full border border-aqua-400/20"></div>
+
+            <div class="relative rounded-3xl overflow-hidden aspect-[4/5]" style="background: linear-gradient(160deg, #073552, #042236);">
+              <!-- Placeholder silhouette -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div style="font-size: 140px; opacity: 0.15;">🤿</div>
+              </div>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <div class="w-32 h-32 rounded-full mb-4" style="background: linear-gradient(135deg, #0e6494, #2de0c8); opacity: 0.6;"></div>
+                <div class="w-48 h-4 rounded-full mb-2" style="background: rgba(108,196,235,0.2);"></div>
+                <div class="w-36 h-3 rounded-full" style="background: rgba(108,196,235,0.1);"></div>
+              </div>
+              <!-- Overlay text "Foto" -->
+              <div class="absolute bottom-6 left-6 right-6">
+                <div class="rounded-2xl p-4" style="background: rgba(1,11,24,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(18,128,188,0.2);">
+                  <p class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-1">PADI #A-1234567</p>
+                  <p class="font-display text-xl text-ocean-50">Marco Rossi</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Content -->
+        <div class="reveal-right">
+          <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Über mich</p>
+          <h2 class="font-display font-light text-ocean-50 mb-6" style="font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.1;">
+            Die Tiefe ist mein<br/>
+            <em class="text-gradient">zweites Zuhause</em>
+          </h2>
+          <p class="font-body text-ocean-200 leading-relaxed mb-5 text-base">
+            Seit über 12 Jahren begleite ich Menschen in die faszinierende Unterwasserwelt. Als PADI Master Scuba Diver Trainer habe ich mehr als 800 Taucher ausgebildet – vom Anfänger bis zum Divemaster.
+          </p>
+          <p class="font-body text-ocean-200 leading-relaxed mb-10 text-base">
+            Meine Leidenschaft gilt besonders dem Wracktauchen in der Ostsee und den atemberaubenden Riffs Südostasiens. Jeder Tauchgang ist eine neue Geschichte.
+          </p>
+
+          <!-- Stats row -->
+          <div class="grid grid-cols-3 gap-4 mb-10">
+            <div class="text-center p-4 rounded-2xl" style="background: rgba(7,53,82,0.4); border: 1px solid rgba(18,128,188,0.2);">
+              <div class="font-display text-4xl font-semibold text-aqua-400 stat-num" data-target="800">0</div>
+              <div class="font-body text-xs text-ocean-300 mt-1 tracking-wide">Ausgebildete Taucher</div>
+            </div>
+            <div class="text-center p-4 rounded-2xl" style="background: rgba(7,53,82,0.4); border: 1px solid rgba(18,128,188,0.2);">
+              <div class="font-display text-4xl font-semibold text-aqua-400 stat-num" data-target="12">0</div>
+              <div class="font-body text-xs text-ocean-300 mt-1 tracking-wide">Jahre Erfahrung</div>
+            </div>
+            <div class="text-center p-4 rounded-2xl" style="background: rgba(7,53,82,0.4); border: 1px solid rgba(18,128,188,0.2);">
+              <div class="font-display text-4xl font-semibold text-aqua-400 stat-num" data-target="2400">0</div>
+              <div class="font-body text-xs text-ocean-300 mt-1 tracking-wide">Logged Dives</div>
+            </div>
+          </div>
+
+          <!-- Cert badges -->
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(45,224,200,0.1); border: 1px solid rgba(45,224,200,0.3); color: #96f2e7;">PADI MSDT</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">IDC Staff Instructor</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">Wreck Specialty</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">Deep Diver</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">Nitrox Instructor</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ CV / TIMELINE ═══ -->
+  <section id="cv" class="relative py-32 px-6 overflow-hidden" style="background: linear-gradient(180deg, #010b18 0%, #03111f 50%, #010b18 100%);">
+    <!-- BG decoration -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5 pointer-events-none" style="background: radial-gradient(circle, #1280bc, transparent);"></div>
+
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-20 reveal">
+        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Werdegang</p>
+        <h2 class="font-display font-light text-ocean-50" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+          Lebenslauf &<br/><span class="text-gradient">Erfahrung</span>
+        </h2>
+      </div>
+
+      <!-- Timeline -->
+      <div class="relative">
+        <div class="timeline-line hidden md:block"></div>
+
+        <!-- Item 1 – rechts -->
+        <div class="relative flex md:justify-end mb-16 timeline-item-right reveal delay-1" style="padding-right: calc(50% + 40px);">
+          <div class="w-full md:max-w-sm">
+            <div class="p-6 rounded-2xl relative" style="background: rgba(7,53,82,0.35); border: 1px solid rgba(18,128,188,0.2);">
+              <span class="font-mono text-xs text-aqua-400 tracking-wider">2022 – Heute</span>
+              <h3 class="font-display text-xl font-semibold text-ocean-50 mt-1 mb-1">Leitender Tauchlehrer</h3>
+              <p class="font-body text-sm text-ocean-400 mb-3">Dive Center Koh Tao, Thailand</p>
+              <p class="font-body text-sm text-ocean-200 leading-relaxed">Ausbildung von Open Water bis Divemaster, Leitung von bis zu 6 Kursen gleichzeitig, Betreuung internationaler Gruppen.</p>
+            </div>
+          </div>
+          <!-- Dot -->
+          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="right: calc(50% - 8px); background: #2de0c8; box-shadow: 0 0 12px rgba(45,224,200,0.6);"></div>
+        </div>
+
+        <!-- Item 2 – links -->
+        <div class="relative flex md:justify-start mb-16 timeline-item-left reveal delay-2" style="padding-left: calc(50% + 40px);">
+          <div class="w-full md:max-w-sm">
+            <div class="p-6 rounded-2xl" style="background: rgba(7,53,82,0.35); border: 1px solid rgba(18,128,188,0.2);">
+              <span class="font-mono text-xs text-aqua-400 tracking-wider">2019 – 2022</span>
+              <h3 class="font-display text-xl font-semibold text-ocean-50 mt-1 mb-1">PADI Instructor</h3>
+              <p class="font-body text-sm text-ocean-400 mb-3">Blue Water Divers, Malediven</p>
+              <p class="font-body text-sm text-ocean-200 leading-relaxed">Durchführung von Specialty-Kursen, Wreck- und Tieftauchgänge, Rescue Diver Ausbildung und Stressbewältigung unter Wasser.</p>
+            </div>
+          </div>
+          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="left: calc(50% - 8px); background: #2de0c8; box-shadow: 0 0 12px rgba(45,224,200,0.6);"></div>
+        </div>
+
+        <!-- Item 3 – rechts -->
+        <div class="relative flex md:justify-end mb-16 timeline-item-right reveal delay-3" style="padding-right: calc(50% + 40px);">
+          <div class="w-full md:max-w-sm">
+            <div class="p-6 rounded-2xl" style="background: rgba(7,53,82,0.35); border: 1px solid rgba(18,128,188,0.2);">
+              <span class="font-mono text-xs text-aqua-400 tracking-wider">2016 – 2019</span>
+              <h3 class="font-display text-xl font-semibold text-ocean-50 mt-1 mb-1">Divemaster & Assistent</h3>
+              <p class="font-body text-sm text-ocean-400 mb-3">Dive Academy Berlin, Deutschland</p>
+              <p class="font-body text-sm text-ocean-200 leading-relaxed">Pool-Training, Assistenz bei OWD-Kursen, Geräteservice und -wartung, Kundenbetreuung und Reisebegleitung.</p>
+            </div>
+          </div>
+          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="right: calc(50% - 8px); background: #1280bc; box-shadow: 0 0 12px rgba(18,128,188,0.6);"></div>
+        </div>
+
+        <!-- Item 4 – links (Ausbildung) -->
+        <div class="relative flex md:justify-start mb-16 timeline-item-left reveal delay-4" style="padding-left: calc(50% + 40px);">
+          <div class="w-full md:max-w-sm">
+            <div class="p-6 rounded-2xl" style="background: rgba(3,17,31,0.6); border: 1px solid rgba(18,128,188,0.15);">
+              <span class="font-mono text-xs text-ocean-400 tracking-wider">2014 – 2016</span>
+              <h3 class="font-display text-xl font-semibold text-ocean-100 mt-1 mb-1">PADI Instructor Development Course</h3>
+              <p class="font-body text-sm text-ocean-400 mb-3">PADI Headquarter, Rancho Santa Margarita</p>
+              <p class="font-body text-sm text-ocean-300 leading-relaxed">IDC Abschluss mit Auszeichnung. Spezialisierung auf Navigation, Tieftauchen und Rescue.</p>
+            </div>
+          </div>
+          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="left: calc(50% - 8px); background: #0a4a70; border: 2px solid #1280bc;"></div>
+        </div>
+
+        <!-- Item 5 – rechts (Studium) -->
+        <div class="relative flex md:justify-end timeline-item-right reveal delay-5" style="padding-right: calc(50% + 40px);">
+          <div class="w-full md:max-w-sm">
+            <div class="p-6 rounded-2xl" style="background: rgba(3,17,31,0.6); border: 1px solid rgba(18,128,188,0.15);">
+              <span class="font-mono text-xs text-ocean-400 tracking-wider">2010 – 2014</span>
+              <h3 class="font-display text-xl font-semibold text-ocean-100 mt-1 mb-1">B.Sc. Meeresbiologie</h3>
+              <p class="font-body text-sm text-ocean-400 mb-3">Universität Kiel, Deutschland</p>
+              <p class="font-body text-sm text-ocean-300 leading-relaxed">Schwerpunkt Korallenökologie und marine Biodiversität. Abschlussarbeit über Riffstrukturen im Roten Meer.</p>
+            </div>
+          </div>
+          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="right: calc(50% - 8px); background: #0a4a70; border: 2px solid #1280bc;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ CERTS ═══ -->
+  <section id="certs" class="relative py-32 px-6 overflow-hidden" style="background: #010b18;">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Qualifikationen</p>
+        <h2 class="font-display font-light text-ocean-50" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+          Zertifikate &<br/><span class="text-gradient">Lizenzen</span>
+        </h2>
+      </div>
+
+      <!-- Cert cards grid – flip on hover -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
+
+        <!-- Card 1 -->
+        <div class="cert-card h-52 reveal delay-1">
+          <div class="cert-inner relative w-full h-full">
+            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0a4a70); border: 1px solid rgba(45,224,200,0.25);">
+              <div class="text-4xl mb-3">🏆</div>
+              <div class="font-display text-lg font-semibold text-ocean-50">PADI MSDT</div>
+              <div class="font-mono text-xs text-aqua-400 mt-1 tracking-wider">Master Scuba Diver Trainer</div>
+            </div>
+            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(45,224,200,0.4);">
+              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Zertifikat #</div>
+              <div class="font-mono text-lg text-ocean-50 mb-2">A-1234567</div>
+              <div class="font-body text-xs text-ocean-300 leading-relaxed">Ausgestellt 2022 · Gültig weltweit<br/>PADI International</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="cert-card h-52 reveal delay-2">
+          <div class="cert-inner relative w-full h-full">
+            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0e6494); border: 1px solid rgba(18,128,188,0.3);">
+              <div class="text-4xl mb-3">⚓</div>
+              <div class="font-display text-lg font-semibold text-ocean-50">Wreck Diver</div>
+              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Specialty Instructor</div>
+            </div>
+            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.5);">
+              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Specialty</div>
+              <div class="font-body text-sm text-ocean-100 leading-relaxed">Zertifiziert für Wreck Penetration bis 40m Tiefe. 200+ Wracktauchgänge.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="cert-card h-52 reveal delay-3">
+          <div class="cert-inner relative w-full h-full">
+            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #0a4a70); border: 1px solid rgba(18,128,188,0.2);">
+              <div class="text-4xl mb-3">🌊</div>
+              <div class="font-display text-lg font-semibold text-ocean-50">Deep Diver</div>
+              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Specialty Instructor</div>
+            </div>
+            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.5);">
+              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Tieftauchen</div>
+              <div class="font-body text-sm text-ocean-100 leading-relaxed">Zertifiziert bis 40m. Dekompressionsmanagement, Gasplanung und Tiefenphysiologie.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="cert-card h-52 reveal delay-1">
+          <div class="cert-inner relative w-full h-full">
+            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0a4a70); border: 1px solid rgba(45,224,200,0.15);">
+              <div class="text-4xl mb-3">💨</div>
+              <div class="font-display text-lg font-semibold text-ocean-50">EFR Instructor</div>
+              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Emergency First Response</div>
+            </div>
+            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(45,224,200,0.3);">
+              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Erste Hilfe</div>
+              <div class="font-body text-sm text-ocean-100 leading-relaxed">CPR, AED, Erste Hilfe für Erwachsene, Kinder & Säuglinge. Aktuelle Zertifizierung.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="cert-card h-52 reveal delay-2">
+          <div class="cert-inner relative w-full h-full">
+            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.2);">
+              <div class="text-4xl mb-3">🧪</div>
+              <div class="font-display text-lg font-semibold text-ocean-50">Nitrox</div>
+              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Enriched Air Instructor</div>
+            </div>
+            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.4);">
+              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">EANx 32/36</div>
+              <div class="font-body text-sm text-ocean-100 leading-relaxed">Erweiterte Tauchzeiten durch optimierten Sauerstoffanteil. Gasanalyse & MOD-Berechnung.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="cert-card h-52 reveal delay-3">
+          <div class="cert-inner relative w-full h-full">
+            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0e6494); border: 1px solid rgba(45,224,200,0.2);">
+              <div class="text-4xl mb-3">🚑</div>
+              <div class="font-display text-lg font-semibold text-ocean-50">Rescue Diver</div>
+              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Instructor Zertifizierung</div>
+            </div>
+            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(45,224,200,0.4);">
+              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Rettungstauchen</div>
+              <div class="font-body text-sm text-ocean-100 leading-relaxed">Notfallmanagement unter Wasser, Rettung erschöpfter und bewusstloser Taucher.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center font-mono text-xs text-ocean-400 mt-8 tracking-widest">↑ Karten umdrehen zum Anzeigen der Details</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ SKILLS ═══ -->
+  <section id="skills" class="relative py-32 px-6 overflow-hidden" style="background: linear-gradient(180deg, #010b18 0%, #03111f 100%);">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Kompetenzen</p>
+        <h2 class="font-display font-light text-ocean-50" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+          Skills &<br/><span class="text-gradient">Sprachen</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-12">
+        <!-- Technical skills -->
+        <div class="reveal-left">
+          <h3 class="font-display text-xl font-semibold text-ocean-100 mb-6">Technische Fertigkeiten</h3>
+          <div class="space-y-5" id="skills-container">
+            <div class="skill-item">
+              <div class="flex justify-between mb-2">
+                <span class="font-body text-sm text-ocean-200">OWD / AOWD Kursleitung</span>
+                <span class="font-mono text-xs text-aqua-400">98%</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
+                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="98"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between mb-2">
+                <span class="font-body text-sm text-ocean-200">Wracktauchen</span>
+                <span class="font-mono text-xs text-aqua-400">95%</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
+                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="95"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between mb-2">
+                <span class="font-body text-sm text-ocean-200">Nitrox & Gasplanung</span>
+                <span class="font-mono text-xs text-aqua-400">90%</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
+                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="90"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between mb-2">
+                <span class="font-body text-sm text-ocean-200">Unterwasserfotografie</span>
+                <span class="font-mono text-xs text-aqua-400">80%</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
+                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="80"></div>
+              </div>
+            </div>
+            <div class="skill-item">
+              <div class="flex justify-between mb-2">
+                <span class="font-body text-sm text-ocean-200">Rescue & Notfallmanagement</span>
+                <span class="font-mono text-xs text-aqua-400">92%</span>
+              </div>
+              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
+                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="92"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Languages & Soft skills -->
+        <div class="reveal-right">
+          <h3 class="font-display text-xl font-semibold text-ocean-100 mb-6">Sprachen</h3>
+          <div class="space-y-5 mb-10">
+            <div class="flex items-center gap-4 p-4 rounded-xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.15);">
+              <span class="text-2xl">🇩🇪</span>
+              <div class="flex-1">
+                <div class="font-body text-sm font-medium text-ocean-100">Deutsch</div>
+                <div class="font-mono text-xs text-ocean-400">Muttersprache</div>
+              </div>
+              <div class="flex gap-1">
+                {[1,2,3,4,5].map ? [1,2,3,4,5] : [0,1,2,3,4]}.join && Array.from({length:5}).map((_,i) => `<div style="width:8px;height:8px;border-radius:50%;background:#2de0c8;"></div>`).join('')
+              </div>
+              <div class="flex gap-1" id="de-dots"></div>
+            </div>
+            <div class="flex items-center gap-4 p-4 rounded-xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.15);">
+              <span class="text-2xl">🇬🇧</span>
+              <div class="flex-1">
+                <div class="font-body text-sm font-medium text-ocean-100">Englisch</div>
+                <div class="font-mono text-xs text-ocean-400">C1 – Verhandlungssicher</div>
+              </div>
+              <div class="flex gap-1" id="en-dots"></div>
+            </div>
+            <div class="flex items-center gap-4 p-4 rounded-xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.15);">
+              <span class="text-2xl">🇹🇭</span>
+              <div class="flex-1">
+                <div class="font-body text-sm font-medium text-ocean-100">Thai</div>
+                <div class="font-mono text-xs text-ocean-400">A2 – Grundkenntnisse</div>
+              </div>
+              <div class="flex gap-1" id="th-dots"></div>
+            </div>
+          </div>
+
+          <h3 class="font-display text-xl font-semibold text-ocean-100 mb-4">Soft Skills</h3>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Teamführung</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Sicherheitsbewusstsein</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Stressresistenz</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Empathie</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Pädagogik</span>
+            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Kommunikation</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ CONTACT ═══ -->
+  <section id="contact" class="relative py-32 px-6 overflow-hidden" style="background: #010b18;">
+    <!-- Decorative blobs -->
+    <div class="absolute bottom-0 left-0 w-96 h-96 rounded-full opacity-5 pointer-events-none -translate-x-1/2 translate-y-1/4" style="background: #1280bc; filter: blur(80px);"></div>
+    <div class="absolute top-0 right-0 w-72 h-72 rounded-full opacity-5 pointer-events-none translate-x-1/2 -translate-y-1/4" style="background: #2de0c8; filter: blur(80px);"></div>
+
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16 reveal">
+        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Let's connect</p>
+        <h2 class="font-display font-light text-ocean-50 mb-5" style="font-size: clamp(2rem, 4vw, 3.5rem);">
+          Bereit für das<br/><span class="text-gradient">nächste Abenteuer?</span>
+        </h2>
+        <p class="font-body text-ocean-300 max-w-md mx-auto text-base leading-relaxed">
+          Auf der Suche nach einem erfahrenen PADI Instructor für dein Dive Center oder Resort? Ich freue mich auf deine Nachricht.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-10">
+        <!-- Contact info -->
+        <div class="reveal-left space-y-5">
+          <div class="flex items-start gap-4 p-5 rounded-2xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.2);">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background: rgba(45,224,200,0.12);">📍</div>
+            <div>
+              <div class="font-body text-sm font-medium text-ocean-100 mb-0.5">Standort</div>
+              <div class="font-body text-sm text-ocean-400">Koh Tao, Thailand · Weltweit verfügbar</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 p-5 rounded-2xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.2);">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background: rgba(45,224,200,0.12);">✉️</div>
+            <div>
+              <div class="font-body text-sm font-medium text-ocean-100 mb-0.5">E-Mail</div>
+              <div class="font-body text-sm text-aqua-400">marco.rossi@divepro.com</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 p-5 rounded-2xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.2);">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background: rgba(45,224,200,0.12);">📱</div>
+            <div>
+              <div class="font-body text-sm font-medium text-ocean-100 mb-0.5">Telefon / WhatsApp</div>
+              <div class="font-body text-sm text-ocean-400">+66 12 345 6789</div>
+            </div>
+          </div>
+          <!-- Social row -->
+          <div class="flex gap-3 pt-2">
+            <a href="#" class="w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all duration-300 hover:scale-110" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2);">💼</a>
+            <a href="#" class="w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all duration-300 hover:scale-110" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2);">📸</a>
+            <a href="#" class="w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all duration-300 hover:scale-110" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2);">🌐</a>
+          </div>
+        </div>
+
+        <!-- Contact form -->
+        <div class="reveal-right">
+          <div class="p-6 rounded-2xl" style="background: rgba(7,53,82,0.2); border: 1px solid rgba(18,128,188,0.2);">
+            <div class="space-y-4">
+              <div>
+                <label class="font-mono text-xs text-ocean-400 tracking-widest uppercase block mb-2">Name</label>
+                <input type="text" placeholder="Dein Name" class="w-full px-4 py-3 rounded-xl text-sm font-body text-ocean-50 placeholder-ocean-600 outline-none transition-all duration-200 focus:border-aqua-400/50" style="background: rgba(1,11,24,0.6); border: 1px solid rgba(18,128,188,0.25);" />
+              </div>
+              <div>
+                <label class="font-mono text-xs text-ocean-400 tracking-widest uppercase block mb-2">E-Mail</label>
+                <input type="email" placeholder="deine@email.com" class="w-full px-4 py-3 rounded-xl text-sm font-body text-ocean-50 placeholder-ocean-600 outline-none transition-all duration-200" style="background: rgba(1,11,24,0.6); border: 1px solid rgba(18,128,188,0.25);" />
+              </div>
+              <div>
+                <label class="font-mono text-xs text-ocean-400 tracking-widest uppercase block mb-2">Nachricht</label>
+                <textarea rows="4" placeholder="Ich bin an einer Zusammenarbeit interessiert..." class="w-full px-4 py-3 rounded-xl text-sm font-body text-ocean-50 placeholder-ocean-600 outline-none resize-none transition-all duration-200" style="background: rgba(1,11,24,0.6); border: 1px solid rgba(18,128,188,0.25);"></textarea>
+              </div>
+              <button class="w-full py-3.5 rounded-xl font-body font-medium text-sm tracking-wide transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style="background: linear-gradient(135deg, #0e6494, #1280bc); box-shadow: 0 4px 20px rgba(14,100,148,0.35);">
+                Nachricht senden →
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ FOOTER ═══ -->
+  <footer class="py-10 px-6 text-center" style="background: #010b18; border-top: 1px solid rgba(18,128,188,0.1);">
+    <div class="font-display text-2xl font-semibold text-gradient mb-2">Marco Rossi</div>
+    <p class="font-mono text-xs text-ocean-500 tracking-widest">PADI MSDT · #A-1234567 · Koh Tao, Thailand</p>
+    <p class="font-body text-xs text-ocean-700 mt-4">© 2025 Marco Rossi · Alle Rechte vorbehalten</p>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════ JS ═══ -->
+  <script>
+    // Navbar scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) navbar.classList.add('nav-scrolled');
+      else navbar.classList.remove('nav-scrolled');
+    });
+
+    // Mobile menu
+    document.getElementById('mob-menu-btn').addEventListener('click', () => {
+      document.getElementById('mob-menu').classList.toggle('hidden');
+    });
+    function closeMob() { document.getElementById('mob-menu').classList.add('hidden'); }
+
+    // Intersection Observer for reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Trigger skill bars
+          const bars = entry.target.querySelectorAll ? entry.target.querySelectorAll('.skill-fill') : [];
+          bars.forEach(bar => { bar.style.width = bar.dataset.width + '%'; });
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+    // Also observe skill container separately
+    const skillObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.skill-fill').forEach(bar => {
+            setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    const sc = document.getElementById('skills-container');
+    if (sc) skillObs.observe(sc);
+
+    // Stat counter animation
+    function animateCounter(el, target, duration) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start = Math.min(start + step, target);
+        el.textContent = Math.floor(start).toLocaleString('de-DE');
+        if (start >= target) clearInterval(timer);
+      }, 16);
+    }
+
+    const statObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.stat-num').forEach(el => {
+            animateCounter(el, parseInt(el.dataset.target), 1500);
+          });
+          statObs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.stat-num').forEach(el => {
+      const parent = el.closest('section') || document.body;
+      statObs.observe(el.parentElement.parentElement);
+    });
+
+    // Language dots
+    function renderDots(id, filled) {
+      const container = document.getElementById(id);
+      if (!container) return;
+      for (let i = 1; i <= 5; i++) {
+        const dot = document.createElement('div');
+        dot.style.cssText = `width:8px;height:8px;border-radius:50%;${i<=filled?'background:#2de0c8;':'background:rgba(255,255,255,0.12);'}`;
+        container.appendChild(dot);
+      }
+    }
+    renderDots('de-dots', 5);
+    renderDots('en-dots', 4);
+    renderDots('th-dots', 2);
+
+    // Active nav on scroll
+    const sections = ['about','cv','certs','skills','contact'];
+    const navLinks = document.querySelectorAll('.nav-link');
+    const scrollSpy = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) scrollSpy.observe(el);
+    });
+  </script>
+</body>
+</html>
