@@ -1,829 +1,458 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Annitar Pasro – PADI Master Scuba Diver Trainer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            ocean: {
-              950: '#010b18',
-              900: '#03111f',
-              800: '#042236',
-              700: '#073552',
-              600: '#0a4a70',
-              500: '#0e6494',
-              400: '#1280bc',
-              300: '#2da4de',
-              200: '#6cc4eb',
-              100: '#b3def5',
-              50:  '#e8f6fd',
-            },
-            aqua: {
-              400: '#2de0c8',
-              300: '#5eebd8',
-              200: '#96f2e7',
-            },
-            sand: '#f0e6d3',
-          },
-          fontFamily: {
-            display: ['Cormorant Garamond', 'serif'],
-            body: ['DM Sans', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
-          animation: {
-            'bubble-1': 'bubble 8s ease-in infinite',
-            'bubble-2': 'bubble 11s ease-in infinite 2s',
-            'bubble-3': 'bubble 7s ease-in infinite 4s',
-            'bubble-4': 'bubble 13s ease-in infinite 1s',
-            'bubble-5': 'bubble 9s ease-in infinite 6s',
-            'bubble-6': 'bubble 15s ease-in infinite 3s',
-            'wave': 'wave 6s ease-in-out infinite',
-            'wave2': 'wave 8s ease-in-out infinite reverse',
-            'float': 'float 5s ease-in-out infinite',
-            'fade-up': 'fadeUp 0.8s ease forwards',
-            'shimmer': 'shimmer 3s ease-in-out infinite',
-          },
-          keyframes: {
-            bubble: {
-              '0%':   { transform: 'translateY(0) scale(1)', opacity: '0' },
-              '10%':  { opacity: '0.6' },
-              '90%':  { opacity: '0.3' },
-              '100%': { transform: 'translateY(-100vh) scale(1.4)', opacity: '0' },
-            },
-            wave: {
-              '0%,100%': { transform: 'translateX(0)' },
-              '50%': { transform: 'translateX(-5%)' },
-            },
-            float: {
-              '0%,100%': { transform: 'translateY(0px) rotate(-1deg)' },
-              '50%': { transform: 'translateY(-12px) rotate(1deg)' },
-            },
-            fadeUp: {
-              '0%': { opacity: '0', transform: 'translateY(30px)' },
-              '100%': { opacity: '1', transform: 'translateY(0)' },
-            },
-            shimmer: {
-              '0%,100%': { opacity: '0.6' },
-              '50%': { opacity: '1' },
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: #010b18; color: #e8f6fd; overflow-x: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Europe Trip 2026 ✈️ A+A</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #0a0e27; --deep: #05081a; --gold: #f0c040; --coral: #ff6b6b;
+    --mint: #48d9a4; --lavender: #a78bfa; --cloud: rgba(255,255,255,0.07);
+    --text: #e8e0d0; --muted: #7a7a9a;
+  }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--deep);color:var(--text);font-family:'Space Mono',monospace;overflow-x:hidden; }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #010b18; }
-    ::-webkit-scrollbar-thumb { background: #1280bc; border-radius: 99px; }
+  #stars-canvas { position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0; }
 
-    /* Reveal animation */
-    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal-left.visible { opacity: 1; transform: translateX(0); }
-    .reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+  /* HERO */
+  .hero { position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;z-index:1; }
+  .earth-ring { position:absolute;bottom:-120px;left:50%;transform:translateX(-50%);width:900px;height:900px;border-radius:50%;background:radial-gradient(ellipse at 40% 35%,#1a3a6e 0%,#0a1a3a 50%,#04091a 100%);box-shadow:0 0 80px rgba(30,80,180,.4),inset 0 0 120px rgba(0,0,0,.6);animation:earthPulse 8s ease-in-out infinite; }
+  .earth-ring::before { content:'';position:absolute;inset:10px;border-radius:50%;border:1px solid rgba(100,160,255,.15); }
+  @keyframes earthPulse { 0%,100%{box-shadow:0 0 80px rgba(30,80,180,.4),inset 0 0 120px rgba(0,0,0,.6);}50%{box-shadow:0 0 120px rgba(30,80,180,.6),inset 0 0 120px rgba(0,0,0,.6);} }
 
-    /* Stagger delays */
-    .delay-1 { transition-delay: 0.1s; }
-    .delay-2 { transition-delay: 0.2s; }
-    .delay-3 { transition-delay: 0.3s; }
-    .delay-4 { transition-delay: 0.4s; }
-    .delay-5 { transition-delay: 0.5s; }
+  .hero-title {
+    font-family:'Outfit',sans-serif;font-weight:900;
+    font-size:clamp(2.8rem,9vw,6.5rem);letter-spacing:-0.03em;
+    background:linear-gradient(135deg,var(--gold) 0%,#fff 45%,#ffd580 80%,var(--gold) 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    text-align:center;line-height:1.0;
+    animation:heroFadeIn 1.5s ease-out forwards;opacity:0;position:relative;z-index:2;
+  }
+  .heart-badge {
+    display:inline-flex;align-items:center;gap:0.5rem;
+    font-family:'Outfit',sans-serif;font-weight:800;
+    font-size:clamp(1.1rem,3vw,2rem);letter-spacing:0.1em;
+    animation:heroFadeIn 1.5s 0.3s ease-out forwards;opacity:0;position:relative;z-index:2;
+    margin-top:0.6rem;
+  }
+  .heart-badge .aa-text {
+    background:linear-gradient(135deg,var(--coral),#ffaaaa);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .heart-badge .heart {
+    font-size:1.5em;line-height:1;
+    display:inline-block;
+    color:var(--coral);
+    animation:heartBeat 1.2s ease-in-out infinite;
+    filter:drop-shadow(0 0 8px rgba(255,107,107,.7));
+  }
+  @keyframes heartBeat { 0%,100%{transform:scale(1);}50%{transform:scale(1.3);} }
 
-    /* Noise texture overlay */
-    .noise::after {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; opacity: 0.5;
-    }
+  .hero-sub { margin-top:1rem;font-size:0.8rem;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;animation:heroFadeIn 1.5s 0.6s ease-out forwards;opacity:0;position:relative;z-index:2; }
+  .hero-dates { margin-top:0.4rem;font-size:0.7rem;letter-spacing:0.2em;color:var(--muted);animation:heroFadeIn 1.5s 1s ease-out forwards;opacity:0;position:relative;z-index:2; }
+  @keyframes heroFadeIn { from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);} }
 
-    /* Bubble positions */
-    .bubble { position: absolute; border-radius: 50%; border: 1px solid rgba(45,224,200,0.3); background: rgba(45,224,200,0.04); pointer-events: none; }
+  .scroll-hint { position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:.5rem;animation:scrollBounce 2s infinite;color:var(--muted);font-size:.6rem;letter-spacing:.2em; }
+  .scroll-hint::after { content:'↓';font-size:1.5rem;color:var(--gold); }
+  @keyframes scrollBounce { 0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);} }
 
-    /* Nav blur */
-    .nav-scrolled { background: rgba(1,11,24,0.85) !important; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(18,128,188,0.15); }
+  /* FLIGHT PATH */
+  .flight-intro { position:relative;z-index:1;width:100%;padding:4rem 2rem 2rem;display:flex;flex-direction:column;align-items:center; }
+  .flight-track { position:relative;width:min(700px,90vw);height:180px;margin:2rem auto; }
+  .flight-track svg { width:100%;height:100%;overflow:visible; }
+  .flight-path-line { stroke-dasharray:600;stroke-dashoffset:600;animation:drawPath 3s 1s ease-out forwards; }
+  @keyframes drawPath { to{stroke-dashoffset:0;} }
+  .plane-icon { font-size:2rem;position:absolute;top:0;left:0;animation:flyPlane 3s 1s ease-in-out forwards;opacity:0;filter:drop-shadow(0 0 10px var(--gold)); }
+  @keyframes flyPlane { 0%{opacity:1;top:140px;left:0;transform:rotate(-25deg);}30%{top:20px;left:30%;transform:rotate(-10deg);}70%{top:40px;left:65%;transform:rotate(5deg);}100%{opacity:1;top:80px;left:calc(100% - 2rem);transform:rotate(0deg);} }
+  .airport-label { position:absolute;font-size:.65rem;letter-spacing:.15em;color:var(--gold);text-align:center; }
+  .airport-dot { width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px var(--gold);display:inline-block;animation:dotPulse 2s infinite; }
+  @keyframes dotPulse { 0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.5);opacity:.7;} }
 
-    /* Timeline line */
-    .timeline-line { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, #1280bc 10%, #1280bc 90%, transparent); transform: translateX(-50%); }
+  /* ARRIVAL */
+  .arrival-banner { background:linear-gradient(135deg,rgba(72,217,164,.15),rgba(72,217,164,.05));border:1px solid rgba(72,217,164,.3);border-radius:16px;padding:1.5rem 2rem;margin:2rem auto;max-width:700px;text-align:center;position:relative;z-index:1;animation:arrivalPulse 3s infinite; }
+  @keyframes arrivalPulse { 0%,100%{box-shadow:0 0 20px rgba(72,217,164,.1);}50%{box-shadow:0 0 40px rgba(72,217,164,.25);} }
+  .arrival-banner h2 { font-family:'Outfit',sans-serif;font-weight:800;font-size:1.6rem;color:var(--mint);margin-bottom:.3rem; }
+  .arrival-banner p { font-size:.75rem;color:var(--muted);letter-spacing:.15em; }
+  .plane-arrival { font-size:3rem;display:inline-block;animation:planeLand 1.5s ease-out forwards;margin-bottom:.5rem; }
+  @keyframes planeLand { from{transform:translateX(-100px) rotate(-15deg);opacity:0;}to{transform:translateX(0) rotate(0deg);opacity:1;} }
 
-    /* Card hover */
-    .cert-card { perspective: 1000px; }
-    .cert-inner { transition: transform 0.6s; transform-style: preserve-3d; }
-    .cert-card:hover .cert-inner { transform: rotateY(180deg); }
-    .cert-front, .cert-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-    .cert-back { transform: rotateY(180deg); position: absolute; inset: 0; }
+  /* STATS */
+  .stats-bar { position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem;padding:2rem;max-width:800px;margin:2rem auto; }
+  .stat-item { text-align:center;background:var(--cloud);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:1.2rem 2rem;min-width:130px;animation:statFadeIn .6s ease-out forwards;opacity:0; }
+  .stat-item:nth-child(1){animation-delay:.1s}.stat-item:nth-child(2){animation-delay:.2s}.stat-item:nth-child(3){animation-delay:.3s}.stat-item:nth-child(4){animation-delay:.4s}.stat-item:nth-child(5){animation-delay:.5s}
+  @keyframes statFadeIn { from{opacity:0;transform:scale(.8);}to{opacity:1;transform:scale(1);} }
+  .stat-value { font-size:2rem;font-weight:700;color:var(--gold);display:block;font-family:'Outfit',sans-serif; }
+  .stat-label { font-size:.6rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase; }
 
-    /* Skill bar */
-    .skill-fill { width: 0; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .divider { position:relative;z-index:1;text-align:center;margin:3rem 0;color:var(--muted);font-size:.65rem;letter-spacing:.4em;text-transform:uppercase; }
+  .divider::before,.divider::after { content:'';display:inline-block;width:80px;height:1px;background:linear-gradient(to right,transparent,var(--muted));vertical-align:middle;margin:0 1rem; }
+  .divider::after { background:linear-gradient(to left,transparent,var(--muted)); }
 
-    /* Section divider wave */
-    .wave-divider svg { display: block; }
+  /* CONTROLS */
+  .controls-wrap { position:relative;z-index:2;max-width:960px;margin:0 auto 2rem;padding:0 1.5rem; }
+  .controls { display:flex;flex-wrap:wrap;gap:0.7rem;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:1rem 1.5rem; }
+  .ctrl-label { font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);white-space:nowrap; }
+  .ctrl-btn { font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;padding:.4rem .9rem;border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:var(--text);transition:all .2s;white-space:nowrap; }
+  .ctrl-btn:hover { background:rgba(240,192,64,.12);border-color:rgba(240,192,64,.4);color:var(--gold); }
+  .ctrl-btn.active { background:rgba(240,192,64,.18);border-color:var(--gold);color:var(--gold); }
+  .ctrl-sep { width:1px;height:26px;background:rgba(255,255,255,.1);flex-shrink:0; }
 
-    /* Gradient text */
-    .text-gradient {
-      background: linear-gradient(135deg, #6cc4eb 0%, #2de0c8 50%, #6cc4eb 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+  /* TIMELINE */
+  .timeline-container { position:relative;z-index:1;max-width:960px;margin:0 auto 3rem;padding:0 1.5rem;transition:opacity .25s; }
 
-    /* Counter */
-    .stat-num { font-variant-numeric: tabular-nums; }
+  .country-block { margin-bottom:2.5rem; }
 
-    /* Glow effect */
-    .glow { box-shadow: 0 0 30px rgba(45,224,200,0.15), 0 0 60px rgba(18,128,188,0.1); }
+  .group-header { display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem;padding:.8rem 1.5rem;border-radius:12px;position:relative;opacity:0;transform:translateX(-40px);transition:opacity .6s ease,transform .6s ease; }
+  .group-header.visible { opacity:1;transform:translateX(0); }
+  .group-header.de{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(255,0,0,.1));border-left:3px solid #dd0000;}
+  .group-header.nl{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(255,100,0,.1));border-left:3px solid #ff6600;}
+  .group-header.be{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(255,220,0,.1));border-left:3px solid #ffd700;}
+  .group-header.fr{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(0,50,200,.1));border-left:3px solid #0032c8;}
+  .group-header.eu{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(100,100,255,.1));border-left:3px solid var(--lavender);}
+  .group-header.ch{background:linear-gradient(135deg,rgba(0,0,0,.6),rgba(255,0,50,.1));border-left:3px solid #ff003c;}
+  .group-header.month-hdr{background:rgba(255,255,255,.04);border-left:3px solid var(--gold);}
+  .group-flag { font-size:2rem; }
+  .group-name { font-family:'Outfit',sans-serif;font-weight:700;font-size:1.3rem; }
+  .group-days { margin-left:auto;font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-align:right; }
 
-    /* Active nav */
-    .nav-link.active { color: #2de0c8; }
+  /* DAY CARDS */
+  .days-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:.75rem; }
+  .day-card { background:var(--cloud);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:.8rem 1rem;cursor:default;transition:transform .3s,border-color .3s,box-shadow .3s;opacity:0;transform:translateY(20px);position:relative;overflow:hidden; }
+  .day-card::before { content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);transition:left .5s; }
+  .day-card:hover::before{left:100%;}
+  .day-card.visible{opacity:1;transform:translateY(0);}
+  .day-card:hover{transform:translateY(-4px) scale(1.02);border-color:rgba(240,192,64,.3);box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:10;}
+  .day-card.special{border-color:rgba(240,192,64,.2);}
+  .day-card.question{border-style:dashed;border-color:rgba(167,139,250,.3);}
+  .card-top { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.3rem; }
+  .day-weekday { font-size:.55rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase; }
+  .day-date { font-size:.75rem;color:var(--gold);margin-bottom:.3rem; }
+  .day-activity { font-size:.82rem;color:var(--text);font-family:'Outfit',sans-serif;font-weight:500;line-height:1.3; }
+  .day-icon { font-size:.95rem;opacity:.65;flex-shrink:0; }
+  .card-bottom { display:flex;align-items:center;gap:.4rem;margin-top:.45rem; }
+  .card-flag { font-size:.85rem; }
+  .card-country-name { font-size:.5rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase; }
+  .lm-badge { display:inline-block;font-size:.48rem;padding:.12rem .45rem;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);border-radius:20px;color:var(--lavender);letter-spacing:.1em;text-transform:uppercase; }
 
-    @media (max-width: 768px) {
-      .timeline-line { left: 20px; }
-      .timeline-item-left, .timeline-item-right { padding-left: 50px !important; padding-right: 0 !important; text-align: left !important; }
-      .timeline-dot { left: 14px !important; right: auto !important; }
-    }
-  </style>
+  /* RETURN */
+  .return-section { position:relative;z-index:1;max-width:700px;margin:4rem auto;padding:3rem 2rem;text-align:center;background:linear-gradient(135deg,rgba(255,107,107,.08),rgba(255,107,107,.02));border:1px solid rgba(255,107,107,.2);border-radius:20px; }
+  .crying-smiley { font-size:6rem;display:block;margin:1rem auto;animation:cryBounce 1s ease-in-out infinite alternate,cryWobble 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(255,107,107,.5)); }
+  @keyframes cryBounce{from{transform:translateY(0) scale(1);}to{transform:translateY(-10px) scale(1.05);}}
+  @keyframes cryWobble{0%,100%{filter:drop-shadow(0 0 20px rgba(255,107,107,.5));}50%{filter:drop-shadow(0 0 40px rgba(255,107,107,.8));}}
+  .tear{display:inline-block;animation:tearDrop 1.5s ease-in infinite;opacity:0;font-size:1.5rem;margin:0 .3rem;}
+  .tear:nth-child(2){animation-delay:.5s}.tear:nth-child(3){animation-delay:1s}
+  @keyframes tearDrop{0%{opacity:0;transform:translateY(-10px);}20%{opacity:1;}80%{opacity:.5;}100%{opacity:0;transform:translateY(30px);}}
+  .return-title{font-family:'Outfit',sans-serif;font-weight:800;font-size:2rem;color:var(--coral);margin:1rem 0 .5rem;}
+  .return-subtitle{font-size:.75rem;color:var(--muted);letter-spacing:.2em;}
+  .return-flight-anim{position:relative;width:100%;height:80px;margin:2rem 0;overflow:hidden;}
+  .return-plane{position:absolute;font-size:2rem;top:50%;transform:translateY(-50%) scaleX(-1);animation:returnFly 4s .5s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(255,107,107,.6));}
+  @keyframes returnFly{0%{left:100%;opacity:1;}90%{opacity:1;}100%{left:-5%;opacity:.3;}}
+
+  .particle{position:fixed;border-radius:50%;pointer-events:none;z-index:0;animation:particleFloat linear infinite;opacity:0;}
+  @keyframes particleFloat{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:.6;}90%{opacity:.3;}100%{transform:translateY(-20px) rotate(360deg);opacity:0;}}
+
+  footer{position:relative;z-index:1;text-align:center;padding:3rem 1rem;font-size:.65rem;color:var(--muted);letter-spacing:.15em;}
+</style>
 </head>
-<body class="relative">
+<body>
+<canvas id="stars-canvas"></canvas>
 
-  <!-- ═══════════════════════════════════════════ NAVBAR ═══ -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-5 px-8">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <a href="#hero" class="font-display text-xl font-semibold tracking-wide text-ocean-100">
-        PADI<span class="text-aqua-400">.</span>
-      </a>
-      <ul class="hidden md:flex gap-8 text-sm font-body font-medium tracking-widest uppercase text-ocean-200">
-        <li><a href="#about"   class="nav-link hover:text-aqua-400 transition-colors">About me</a></li>
-        <li><a href="#cv"      class="nav-link hover:text-aqua-400 transition-colors">CV</a></li>
-        <li><a href="#certs"   class="nav-link hover:text-aqua-400 transition-colors">Certificates</a></li>
-        <li><a href="#skills"  class="nav-link hover:text-aqua-400 transition-colors">Skills</a></li>
-        <li><a href="#contact" class="nav-link hover:text-aqua-400 transition-colors">Contact</a></li>
-      </ul>
-      <a href="#contact" class="hidden md:inline-flex items-center gap-2 px-5 py-2 rounded-full border border-aqua-400/40 text-aqua-400 text-sm font-medium hover:bg-aqua-400/10 transition-all duration-300">
-        Make contact
-      </a>
-      <!-- Mobile menu button -->
-      <button id="mob-menu-btn" class="md:hidden text-ocean-100 p-2">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="6" x2="19" y2="6"/><line x1="3" y1="11" x2="19" y2="11"/><line x1="3" y1="16" x2="19" y2="16"/>
-        </svg>
-      </button>
+<!-- HERO -->
+<section class="hero">
+  <div class="earth-ring"></div>
+  <h1 class="hero-title">Europe Trip<br>2026</h1>
+  <div class="heart-badge">
+    <span class="heart">♥</span>
+    <span class="aa-text">A + A</span>
+    <span class="heart">♥</span>
+  </div>
+  <p class="hero-sub">Bangkok → Frankfurt → The World</p>
+  <p class="hero-dates">25 June – 13 September 2026 &nbsp;·&nbsp; 81 Days</p>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- FLIGHT PATH -->
+<div class="flight-intro">
+  <div class="flight-track">
+    <svg viewBox="0 0 700 180" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#f0c040;stop-opacity:.8"/>
+          <stop offset="100%" style="stop-color:#48d9a4;stop-opacity:.8"/>
+        </linearGradient>
+      </defs>
+      <path d="M 40,150 Q 180,20 360,60 Q 520,100 660,80" fill="none" stroke="url(#pathGrad)" stroke-width="2" stroke-dasharray="8 4" class="flight-path-line"/>
+      <path d="M 40,150 Q 180,20 360,60 Q 520,100 660,80" fill="none" stroke="rgba(240,192,64,.2)" stroke-width="8" class="flight-path-line"/>
+    </svg>
+    <div class="airport-label" style="left:0;bottom:10px;transform:translateX(-10px);">
+      <div class="airport-dot"></div>
+      <div style="margin-top:.3rem;">BKK</div>
+      <div style="color:var(--muted);font-size:.5rem;">BANGKOK</div>
     </div>
-    <!-- Mobile menu -->
-    <div id="mob-menu" class="hidden md:hidden mt-4 mx-4 rounded-2xl bg-ocean-800/90 backdrop-blur-xl border border-ocean-600/30 p-6">
-      <ul class="flex flex-col gap-4 text-sm font-medium tracking-wider uppercase text-ocean-100">
-        <li><a href="#about"   onclick="closeMob()">About me</a></li>
-        <li><a href="#cv"      onclick="closeMob()">CV</a></li>
-        <li><a href="#certs"   onclick="closeMob()">Certificates</a></li>
-        <li><a href="#skills"  onclick="closeMob()">Skills</a></li>
-        <li><a href="#contact" onclick="closeMob()">Contact</a></li>
-      </ul>
+    <div class="airport-label" style="right:0;top:30px;transform:translateX(10px);">
+      <div class="airport-dot" style="background:var(--mint);box-shadow:0 0 12px var(--mint);"></div>
+      <div style="margin-top:.3rem;color:var(--mint);">FRA</div>
+      <div style="color:var(--muted);font-size:.5rem;">FRANKFURT</div>
     </div>
-  </nav>
+    <div class="plane-icon">✈️</div>
+  </div>
+  <p style="font-size:.7rem;color:var(--muted);letter-spacing:.2em;text-align:center;">APPROX. 11 HOURS &nbsp;·&nbsp; ~9,500 KM &nbsp;·&nbsp; CRUISING ALTITUDE 35,000 FT</p>
+</div>
 
-  <!-- ═══════════════════════════════════════════ HERO ═══ -->
-  <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden noise">
-    <!-- Deep gradient bg -->
-    <div class="absolute inset-0" style="background: radial-gradient(ellipse at 30% 60%, #073552 0%, #042236 30%, #010b18 70%);"></div>
+<!-- ARRIVAL -->
+<div class="arrival-banner" style="opacity:0;animation:heroFadeIn 1s 3.5s forwards;">
+  <div class="plane-arrival">🛬</div>
+  <h2>Welcome to Germany!</h2>
+  <p>THURSDAY, 25 JUNE 2026 &nbsp;·&nbsp; FRANKFURT → DÜSSELDORF</p>
+</div>
 
-    <!-- Animated light ray -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full opacity-20" style="background: linear-gradient(to bottom, transparent, #2de0c8, transparent);"></div>
-    <div class="absolute top-0 left-1/3 w-px h-3/4 opacity-10" style="background: linear-gradient(to bottom, #6cc4eb, transparent);"></div>
-    <div class="absolute top-0 right-1/4 w-px h-2/3 opacity-10" style="background: linear-gradient(to bottom, #2da4de, transparent);"></div>
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-value">81</span><span class="stat-label">Total Days</span></div>
+  <div class="stat-item"><span class="stat-value">6</span><span class="stat-label">Countries</span></div>
+  <div class="stat-item"><span class="stat-value">20+</span><span class="stat-label">Cities</span></div>
+  <div class="stat-item"><span class="stat-value">11</span><span class="stat-label">Last Minute</span></div>
+  <div class="stat-item"><span class="stat-value" style="color:var(--coral)">♥</span><span class="stat-label">A + A</span></div>
+</div>
 
-    <!-- Bubbles -->
-    <div class="bubble animate-bubble-1" style="width:8px;height:8px;left:15%;bottom:-20px;animation-duration:9s;"></div>
-    <div class="bubble animate-bubble-2" style="width:5px;height:5px;left:25%;bottom:-20px;animation-duration:12s;"></div>
-    <div class="bubble animate-bubble-3" style="width:12px;height:12px;left:40%;bottom:-20px;animation-duration:8s;"></div>
-    <div class="bubble animate-bubble-4" style="width:6px;height:6px;left:55%;bottom:-20px;animation-duration:14s;"></div>
-    <div class="bubble animate-bubble-5" style="width:10px;height:10px;left:70%;bottom:-20px;animation-duration:10s;"></div>
-    <div class="bubble animate-bubble-6" style="width:4px;height:4px;left:80%;bottom:-20px;animation-duration:16s;"></div>
-    <div class="bubble" style="width:7px;height:7px;left:90%;bottom:-20px;animation:bubble 11s ease-in infinite 7s;"></div>
-    <div class="bubble" style="width:9px;height:9px;left:5%;bottom:-20px;animation:bubble 13s ease-in infinite 5s;"></div>
+<div class="divider">The Journey</div>
 
-    <!-- Wave bottom -->
-    <div class="absolute bottom-0 left-0 right-0 wave-divider">
-      <svg viewBox="0 0 1440 80" preserveAspectRatio="none" style="width:100%;height:80px;">
-        <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,80 L0,80 Z" fill="#010b18"/>
-      </svg>
+<!-- CONTROLS -->
+<div class="controls-wrap">
+  <div class="controls">
+    <span class="ctrl-label">Group</span>
+    <button class="ctrl-btn active" data-group="country">🌍 Country</button>
+    <button class="ctrl-btn" data-group="month">📅 Month</button>
+    <button class="ctrl-btn" data-group="none">📋 All Days</button>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label">Sort</span>
+    <button class="ctrl-btn active" data-sort="asc">↑ Earliest</button>
+    <button class="ctrl-btn" data-sort="desc">↓ Latest</button>
+    <div class="ctrl-sep"></div>
+    <span class="ctrl-label">Country</span>
+    <button class="ctrl-btn active" data-filter="all">All</button>
+    <button class="ctrl-btn" data-filter="de">🇩🇪 DE</button>
+    <button class="ctrl-btn" data-filter="nl">🇳🇱 NL</button>
+    <button class="ctrl-btn" data-filter="be">🇧🇪 BE</button>
+    <button class="ctrl-btn" data-filter="fr">🇫🇷 FR</button>
+    <button class="ctrl-btn" data-filter="ch">🇨🇭 CH</button>
+    <button class="ctrl-btn" data-filter="eu">🌍 EU?</button>
+  </div>
+</div>
+
+<!-- DYNAMIC TIMELINE -->
+<div class="timeline-container" id="timeline"></div>
+
+<!-- RETURN FLIGHT -->
+<div class="return-section">
+  <p style="font-size:.65rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;">The Last Day</p>
+  <p style="font-size:.85rem;color:var(--gold);letter-spacing:.15em;margin-top:.3rem;">Sunday, 13 September 2026</p>
+  <span class="crying-smiley">😭</span>
+  <div style="margin:.5rem 0;"><span class="tear">💧</span><span class="tear">💧</span><span class="tear">💧</span></div>
+  <h2 class="return-title">Frankfurt :,( → Bangkok</h2>
+  <p class="return-subtitle">End of an 81-day European adventure</p>
+  <div class="return-flight-anim"><div class="return-plane">✈️</div></div>
+  <p style="font-size:.7rem;color:var(--muted);margin-top:1rem;line-height:1.8;">Goodbye Rhine. Goodbye canals. Goodbye chocolate &amp; waffles.<br>Goodbye Europe... until next time 🌍💛 A+A ♥</p>
+</div>
+
+<footer>
+  ✈️ &nbsp; Bangkok → Frankfurt → Europe → Frankfurt → Bangkok &nbsp; ✈️<br>
+  <span style="margin-top:.5rem;display:block;">25 June – 13 September 2026 &nbsp;·&nbsp; 81 Days &nbsp;·&nbsp; A+A ♥</span>
+</footer>
+
+<script>
+// ── STARS ──
+const canvas = document.getElementById('stars-canvas');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+const stars = Array.from({length:220},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1.5+.3,a:Math.random()*0.35+0.1,speed:Math.random()*.0003+.0001,phase:Math.random()*Math.PI*2}));
+function drawStars(t){ ctx.clearRect(0,0,canvas.width,canvas.height); stars.forEach(s=>{ const a=(Math.sin(t*s.speed*20+s.phase)+1)/2*s.a; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle=`rgba(255,255,255,${a})`; ctx.fill(); }); requestAnimationFrame(drawStars); }
+requestAnimationFrame(drawStars);
+
+// ── PARTICLES ──
+function mkParticle(){ const p=document.createElement('div'); p.className='particle'; const sz=Math.random()*4+1,col=['#f0c040','#48d9a4','#a78bfa','#ff6b6b','#fff'][Math.floor(Math.random()*5)],dur=Math.random()*15+8,del=Math.random()*5; p.style.cssText=`width:${sz}px;height:${sz}px;background:${col};left:${Math.random()*100}%;animation-duration:${dur}s;animation-delay:${del}s;opacity:0;`; document.body.appendChild(p); setTimeout(()=>p.remove(),(dur+del)*1000); }
+setInterval(mkParticle,800);
+
+// ── DATA ──
+const DAYS = [
+  {iso:'2026-06-25',wd:'Thursday',dt:'25 Jun',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Arrival: Frankfurt → Düsseldorf',ic:'🛬',tp:'special'},
+  {iso:'2026-06-26',wd:'Friday',dt:'26 Jun',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-06-27',wd:'Saturday',dt:'27 Jun',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Day Trip',ic:'🚗',tp:'normal'},
+  {iso:'2026-06-28',wd:'Sunday',dt:'28 Jun',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Day Trip',ic:'🗺️',tp:'normal'},
+  {iso:'2026-06-29',wd:'Monday',dt:'29 Jun',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-06-30',wd:'Tuesday',dt:'30 Jun',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Cologne',ic:'⛪',tp:'special'},
+  {iso:'2026-07-01',wd:'Wednesday',dt:'1 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-02',wd:'Thursday',dt:'2 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-03',wd:'Friday',dt:'3 Jul',co:'nl',cn:'Netherlands',fl:'🇳🇱',ac:'Amsterdam',ic:'🌷',tp:'special'},
+  {iso:'2026-07-04',wd:'Saturday',dt:'4 Jul',co:'nl',cn:'Netherlands',fl:'🇳🇱',ac:'Amsterdam',ic:'🚲',tp:'special'},
+  {iso:'2026-07-05',wd:'Sunday',dt:'5 Jul',co:'nl',cn:'Netherlands',fl:'🇳🇱',ac:'Den Haag',ic:'🏖️',tp:'normal'},
+  {iso:'2026-07-06',wd:'Monday',dt:'6 Jul',co:'nl',cn:'Netherlands',fl:'🇳🇱',ac:'Den Haag',ic:'🏛️',tp:'normal'},
+  {iso:'2026-07-07',wd:'Tuesday',dt:'7 Jul',co:'be',cn:'Belgium',fl:'🇧🇪',ac:'Brügge / Brussels',ic:'🍫',tp:'special'},
+  {iso:'2026-07-08',wd:'Wednesday',dt:'8 Jul',co:'be',cn:'Belgium',fl:'🇧🇪',ac:'Brügge / Brussels',ic:'🍺',tp:'special'},
+  {iso:'2026-07-09',wd:'Thursday',dt:'9 Jul',co:'fr',cn:'France',fl:'🇫🇷',ac:'Lille',ic:'🥐',tp:'special'},
+  {iso:'2026-07-10',wd:'Friday',dt:'10 Jul',co:'fr',cn:'France',fl:'🇫🇷',ac:'Lille',ic:'🎨',tp:'special'},
+  {iso:'2026-07-11',wd:'Saturday',dt:'11 Jul',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-07-12',wd:'Sunday',dt:'12 Jul',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-07-13',wd:'Monday',dt:'13 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-14',wd:'Tuesday',dt:'14 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Düsseldorf',ic:'🛍️',tp:'special'},
+  {iso:'2026-07-15',wd:'Wednesday',dt:'15 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-16',wd:'Thursday',dt:'16 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG / Aachen',ic:'🏰',tp:'normal'},
+  {iso:'2026-07-17',wd:'Friday',dt:'17 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG → Venlo',ic:'🌷',tp:'special'},
+  {iso:'2026-07-18',wd:'Saturday',dt:'18 Jul',co:'eu',cn:'Europe?',fl:'🌍',ac:'Nothing 😴',ic:'💤',tp:'question'},
+  {iso:'2026-07-19',wd:'Sunday',dt:'19 Jul',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip (Eifel?)',ic:'🌲',tp:'question'},
+  {iso:'2026-07-20',wd:'Monday',dt:'20 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-21',wd:'Tuesday',dt:'21 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Essen',ic:'⚙️',tp:'special'},
+  {iso:'2026-07-22',wd:'Wednesday',dt:'22 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-23',wd:'Thursday',dt:'23 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-24',wd:'Friday',dt:'24 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG → Roermond',ic:'🛍️',tp:'special'},
+  {iso:'2026-07-25',wd:'Saturday',dt:'25 Jul',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-07-26',wd:'Sunday',dt:'26 Jul',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-07-27',wd:'Monday',dt:'27 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-28',wd:'Tuesday',dt:'28 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Dortmund',ic:'⚽',tp:'special'},
+  {iso:'2026-07-29',wd:'Wednesday',dt:'29 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-07-30',wd:'Thursday',dt:'30 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Free Choose Office',ic:'🏢',tp:'question'},
+  {iso:'2026-07-31',wd:'Friday',dt:'31 Jul',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-08-01',wd:'Saturday',dt:'1 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-08-02',wd:'Sunday',dt:'2 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-08-03',wd:'Monday',dt:'3 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🎲',tp:'question',lm:1},
+  {iso:'2026-08-04',wd:'Tuesday',dt:'4 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'✈️',tp:'question',lm:1},
+  {iso:'2026-08-05',wd:'Wednesday',dt:'5 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🌍',tp:'question',lm:1},
+  {iso:'2026-08-06',wd:'Thursday',dt:'6 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🗺️',tp:'question',lm:1},
+  {iso:'2026-08-07',wd:'Friday',dt:'7 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🎲',tp:'question',lm:1},
+  {iso:'2026-08-08',wd:'Saturday',dt:'8 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🌍',tp:'question',lm:1},
+  {iso:'2026-08-09',wd:'Sunday',dt:'9 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'✈️',tp:'question',lm:1},
+  {iso:'2026-08-10',wd:'Monday',dt:'10 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🎲',tp:'question',lm:1},
+  {iso:'2026-08-11',wd:'Tuesday',dt:'11 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🌍',tp:'question',lm:1},
+  {iso:'2026-08-12',wd:'Wednesday',dt:'12 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'✈️',tp:'question',lm:1},
+  {iso:'2026-08-13',wd:'Thursday',dt:'13 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🎲',tp:'question',lm:1},
+  {iso:'2026-08-14',wd:'Friday',dt:'14 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?Last Minute Flight',ic:'🌍',tp:'question',lm:1},
+  {iso:'2026-08-15',wd:'Saturday',dt:'15 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Nothing 😌',ic:'💤',tp:'question'},
+  {iso:'2026-08-16',wd:'Sunday',dt:'16 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Nothing 😌',ic:'💤',tp:'question'},
+  {iso:'2026-08-17',wd:'Monday',dt:'17 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Free Office Choice',ic:'🏢',tp:'normal'},
+  {iso:'2026-08-18',wd:'Tuesday',dt:'18 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Free Office Choice',ic:'🏢',tp:'normal'},
+  {iso:'2026-08-19',wd:'Wednesday',dt:'19 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Free Office Choice',ic:'🏢',tp:'normal'},
+  {iso:'2026-08-20',wd:'Thursday',dt:'20 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Free Office Choice',ic:'🏢',tp:'normal'},
+  {iso:'2026-08-21',wd:'Friday',dt:'21 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Free Office Choice',ic:'🏢',tp:'normal'},
+  {iso:'2026-08-22',wd:'Saturday',dt:'22 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-08-23',wd:'Sunday',dt:'23 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-08-24',wd:'Monday',dt:'24 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?',ic:'❓',tp:'question'},
+  {iso:'2026-08-25',wd:'Tuesday',dt:'25 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?',ic:'❓',tp:'question'},
+  {iso:'2026-08-26',wd:'Wednesday',dt:'26 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?',ic:'❓',tp:'question'},
+  {iso:'2026-08-27',wd:'Thursday',dt:'27 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?',ic:'❓',tp:'question'},
+  {iso:'2026-08-28',wd:'Friday',dt:'28 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'?',ic:'❓',tp:'question'},
+  {iso:'2026-08-29',wd:'Saturday',dt:'29 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Koblenz',ic:'🏰',tp:'special'},
+  {iso:'2026-08-30',wd:'Sunday',dt:'30 Aug',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Koblenz',ic:'🍷',tp:'special'},
+  {iso:'2026-08-31',wd:'Monday',dt:'31 Aug',co:'eu',cn:'Europe?',fl:'🌍',ac:'TBD',ic:'❓',tp:'question'},
+  {iso:'2026-09-01',wd:'Tuesday',dt:'1 Sep',co:'eu',cn:'Europe?',fl:'🌍',ac:'Stuttgart???',ic:'🏎️',tp:'question'},
+  {iso:'2026-09-02',wd:'Wednesday',dt:'2 Sep',co:'eu',cn:'Europe?',fl:'🌍',ac:'Stuttgart???',ic:'🏎️',tp:'question'},
+  {iso:'2026-09-03',wd:'Thursday',dt:'3 Sep',co:'eu',cn:'Europe?',fl:'🌍',ac:'Stuttgart???',ic:'🏎️',tp:'question'},
+  {iso:'2026-09-04',wd:'Friday',dt:'4 Sep',co:'eu',cn:'Europe?',fl:'🌍',ac:'?',ic:'❓',tp:'question'},
+  {iso:'2026-09-05',wd:'Saturday',dt:'5 Sep',co:'eu',cn:'Europe?',fl:'🌍',ac:'Nothing',ic:'💤',tp:'question'},
+  {iso:'2026-09-06',wd:'Sunday',dt:'6 Sep',co:'eu',cn:'Europe?',fl:'🌍',ac:'Short Trip',ic:'✨',tp:'question'},
+  {iso:'2026-09-07',wd:'Monday',dt:'7 Sep',co:'de',cn:'Germany',fl:'🇩🇪',ac:'MG',ic:'🏡',tp:'normal'},
+  {iso:'2026-09-08',wd:'Tuesday',dt:'8 Sep',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Koblenz',ic:'🏰',tp:'special'},
+  {iso:'2026-09-09',wd:'Wednesday',dt:'9 Sep',co:'de',cn:'Germany',fl:'🇩🇪',ac:'Koblenz',ic:'🍷',tp:'special'},
+  {iso:'2026-09-10',wd:'Thursday',dt:'10 Sep',co:'ch',cn:'Switzerland',fl:'🇨🇭',ac:'?',ic:'⛰️',tp:'question'},
+  {iso:'2026-09-11',wd:'Friday',dt:'11 Sep',co:'ch',cn:'Switzerland',fl:'🇨🇭',ac:'?',ic:'🍫',tp:'question'},
+  {iso:'2026-09-12',wd:'Saturday',dt:'12 Sep',co:'de',cn:'Germany',fl:'🇩🇪',ac:'?',ic:'❓',tp:'question'},
+];
+
+const MONTHS = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function monthLabel(iso){ return MONTHS[parseInt(iso.split('-')[1])]+' 2026'; }
+
+function cardHTML(d){
+  return `<div class="day-card ${d.tp}">
+    <div class="card-top">
+      <div><div class="day-weekday">${d.wd}</div><div class="day-date">${d.dt}</div></div>
+      <span class="day-icon">${d.ic}</span>
     </div>
+    <div class="day-activity">${d.ac}${d.lm?'&nbsp;<span class="lm-badge">Surprise!</span>':''}</div>
+    <div class="card-bottom"><span class="card-flag">${d.fl}</span><span class="card-country-name">${d.cn}</span></div>
+  </div>`;
+}
 
-    <!-- Hero content -->
-    <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
-      <!-- Diver icon -->
-      <div class="animate-float mb-8 inline-block">
-        <div class="w-20 h-20 mx-auto rounded-full flex items-center justify-center text-5xl glow" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(45,224,200,0.3);">
-          🤿
-        </div>
-      </div>
+function groupHdr(cls,flag,name,sub){
+  return `<div class="group-header ${cls}"><span class="group-flag">${flag}</span><span class="group-name">${name}</span><span class="group-days">${sub}</span></div>`;
+}
 
-      <p class="font-mono text-aqua-400 text-sm tracking-[0.3em] uppercase mb-4 animate-shimmer" style="animation-delay:0.2s">
-        PADI Master Scuba Diver Trainer · #A-1234567
-      </p>
+let groupMode='country', sortDir='asc', filterCo='all';
 
-      <h1 class="font-display font-light text-ocean-50 leading-none mb-3" style="font-size: clamp(3rem, 9vw, 7rem); letter-spacing: -0.02em;">
-        ANNITAR
-      </h1>
-      <h1 class="font-display font-semibold text-gradient leading-none mb-8" style="font-size: clamp(3rem, 9vw, 7rem); letter-spacing: -0.02em;">
-        PASRO
-      </h1>
+function render(){
+  const tl=document.getElementById('timeline');
+  tl.style.opacity='0';
+  setTimeout(()=>{
+    let data=[...DAYS];
+    if(filterCo!=='all') data=data.filter(d=>d.co===filterCo);
+    if(sortDir==='desc') data=[...data].reverse();
 
-      <p class="font-body text-ocean-200 text-lg font-light max-w-xl mx-auto mb-12 leading-relaxed" style="animation: fadeUp 1s 0.5s ease both;">
-        Passionate diving instructor with over 5 years of experience. Specialist in surface navigation, wreck diving, and deep dives in the world's most beautiful seas.
-      </p>
+    let html='';
 
-      <div class="flex flex-col sm:flex-row gap-4 justify-center" style="animation: fadeUp 1s 0.8s ease both;">
-        <a href="#cv" class="px-8 py-3.5 rounded-full font-body font-medium text-sm tracking-wide transition-all duration-300 hover:scale-105"
-           style="background: linear-gradient(135deg, #0e6494, #1280bc); border: 1px solid rgba(45,224,200,0.2); box-shadow: 0 8px 32px rgba(14,100,148,0.4);">
-          View resume
-        </a>
-        <a href="#contact" class="px-8 py-3.5 rounded-full font-body font-medium text-sm tracking-wide border border-aqua-400/40 text-aqua-400 hover:bg-aqua-400/10 transition-all duration-300 hover:scale-105">
-          Make contact
-        </a>
-      </div>
-
-      <!-- Scroll indicator -->
-      <div class="absolute bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
-        <span class="font-mono text-xs tracking-widest uppercase text-ocean-200">Scroll</span>
-        <div class="w-px h-12 bg-gradient-to-b from-ocean-300 to-transparent"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ ABOUT ═══ -->
-  <section id="about" class="relative py-32 px-6 overflow-hidden" style="background: #010b18;">
-    <div class="max-w-6xl mx-auto">
-      <div class="grid md:grid-cols-2 gap-16 items-center">
-        <!-- Left: Photo -->
-        <div class="reveal-left">
-          <div class="relative">
-            <!-- Decorative frame -->
-            <div class="absolute -top-4 -left-4 w-full h-full rounded-3xl border border-ocean-600/40"></div>
-            <div class="absolute -top-8 -left-8 w-32 h-32 rounded-full border border-aqua-400/20"></div>
-
-            <div class="relative rounded-3xl overflow-hidden aspect-[4/5]" style="background: linear-gradient(160deg, #073552, #042236);">
-              <!-- Placeholder silhouette -->
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div style="font-size: 140px; opacity: 0.15;">🤿</div>
-              </div>
-              <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <div class="w-32 h-32 rounded-full mb-4" style="background: linear-gradient(135deg, #0e6494, #2de0c8); opacity: 0.6;"></div>
-                <div class="w-48 h-4 rounded-full mb-2" style="background: rgba(108,196,235,0.2);"></div>
-                <div class="w-36 h-3 rounded-full" style="background: rgba(108,196,235,0.1);"></div>
-              </div>
-              <!-- Overlay text "Foto" -->
-              <div class="absolute bottom-6 left-6 right-6">
-                <div class="rounded-2xl p-4" style="background: rgba(1,11,24,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(18,128,188,0.2);">
-                  <p class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-1">PADI #A-1234567</p>
-                  <p class="font-display text-xl text-ocean-50">Annitar Pasro</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Content -->
-        <div class="reveal-right">
-          <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">About me</p>
-          <h2 class="font-display font-light text-ocean-50 mb-6" style="font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.1;">
-            The depths are<br/>
-            <em class="text-gradient">my second home</em>
-          </h2>
-          <p class="font-body text-ocean-200 leading-relaxed mb-5 text-base">
-            For over 6 years, I have been guiding people into the fascinating underwater world. As a PADI Master Scuba Diver Trainer, I have trained more than 800 divers – from beginners to Divemasters.
-          </p>
-          <p class="font-body text-ocean-200 leading-relaxed mb-10 text-base">
-            My passion lies particularly in wreck diving in the Baltic Sea and the breathtaking reefs of Southeast Asia. Every dive is a new story.
-          </p>
-
-          <!-- Stats row -->
-          <div class="grid grid-cols-3 gap-4 mb-10">
-            <div class="text-center p-4 rounded-2xl" style="background: rgba(7,53,82,0.4); border: 1px solid rgba(18,128,188,0.2);">
-              <div class="font-display text-4xl font-semibold text-aqua-400 stat-num" data-target="800">0</div>
-              <div class="font-body text-xs text-ocean-300 mt-1 tracking-wide">trained divers</div>
-            </div>
-            <div class="text-center p-4 rounded-2xl" style="background: rgba(7,53,82,0.4); border: 1px solid rgba(18,128,188,0.2);">
-              <div class="font-display text-4xl font-semibold text-aqua-400 stat-num" data-target="12">0</div>
-              <div class="font-body text-xs text-ocean-300 mt-1 tracking-wide">years of experience</div>
-            </div>
-            <div class="text-center p-4 rounded-2xl" style="background: rgba(7,53,82,0.4); border: 1px solid rgba(18,128,188,0.2);">
-              <div class="font-display text-4xl font-semibold text-aqua-400 stat-num" data-target="2400">0</div>
-              <div class="font-body text-xs text-ocean-300 mt-1 tracking-wide">Logged Dives</div>
-            </div>
-          </div>
-
-          <!-- Cert badges -->
-          <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(45,224,200,0.1); border: 1px solid rgba(45,224,200,0.3); color: #96f2e7;">PADI MSDT</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">IDC Staff Instructor</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">Wreck Specialty</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">Deep Diver</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-mono tracking-wide" style="background: rgba(18,128,188,0.15); border: 1px solid rgba(18,128,188,0.3); color: #6cc4eb;">Nitrox Instructor</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ CV / TIMELINE ═══ -->
-  <section id="cv" class="relative py-32 px-6 overflow-hidden" style="background: linear-gradient(180deg, #010b18 0%, #03111f 50%, #010b18 100%);">
-    <!-- BG decoration -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-5 pointer-events-none" style="background: radial-gradient(circle, #1280bc, transparent);"></div>
-
-    <div class="max-w-5xl mx-auto">
-      <div class="text-center mb-20 reveal">
-        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Career</p>
-        <h2 class="font-display font-light text-ocean-50" style="font-size: clamp(2rem, 4vw, 3.5rem);">
-          CV &<br/><span class="text-gradient">Experience</span>
-        </h2>
-      </div>
-
-      <!-- Timeline -->
-      <div class="relative">
-        <div class="timeline-line hidden md:block"></div>
-
-        <!-- Item 1 – rechts -->
-        <div class="relative flex md:justify-end mb-16 timeline-item-right reveal delay-1" style="padding-right: calc(50% + 40px);">
-          <div class="w-full md:max-w-sm">
-            <div class="p-6 rounded-2xl relative" style="background: rgba(7,53,82,0.35); border: 1px solid rgba(18,128,188,0.2);">
-              <span class="font-mono text-xs text-aqua-400 tracking-wider">2022 – Heute</span>
-              <h3 class="font-display text-xl font-semibold text-ocean-50 mt-1 mb-1">Leitender Tauchlehrer</h3>
-              <p class="font-body text-sm text-ocean-400 mb-3">Dive Center Koh Tao, Thailand</p>
-              <p class="font-body text-sm text-ocean-200 leading-relaxed">Ausbildung von Open Water bis Divemaster, Leitung von bis zu 6 Kursen gleichzeitig, Betreuung internationaler Gruppen.</p>
-            </div>
-          </div>
-          <!-- Dot -->
-          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="right: calc(50% - 8px); background: #2de0c8; box-shadow: 0 0 12px rgba(45,224,200,0.6);"></div>
-        </div>
-
-        <!-- Item 2 – links -->
-        <div class="relative flex md:justify-start mb-16 timeline-item-left reveal delay-2" style="padding-left: calc(50% + 40px);">
-          <div class="w-full md:max-w-sm">
-            <div class="p-6 rounded-2xl" style="background: rgba(7,53,82,0.35); border: 1px solid rgba(18,128,188,0.2);">
-              <span class="font-mono text-xs text-aqua-400 tracking-wider">2019 – 2022</span>
-              <h3 class="font-display text-xl font-semibold text-ocean-50 mt-1 mb-1">PADI Instructor</h3>
-              <p class="font-body text-sm text-ocean-400 mb-3">Blue Water Divers, Malediven</p>
-              <p class="font-body text-sm text-ocean-200 leading-relaxed">Durchführung von Specialty-Kursen, Wreck- und Tieftauchgänge, Rescue Diver Ausbildung und Stressbewältigung unter Wasser.</p>
-            </div>
-          </div>
-          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="left: calc(50% - 8px); background: #2de0c8; box-shadow: 0 0 12px rgba(45,224,200,0.6);"></div>
-        </div>
-
-        <!-- Item 3 – rechts -->
-        <div class="relative flex md:justify-end mb-16 timeline-item-right reveal delay-3" style="padding-right: calc(50% + 40px);">
-          <div class="w-full md:max-w-sm">
-            <div class="p-6 rounded-2xl" style="background: rgba(7,53,82,0.35); border: 1px solid rgba(18,128,188,0.2);">
-              <span class="font-mono text-xs text-aqua-400 tracking-wider">2016 – 2019</span>
-              <h3 class="font-display text-xl font-semibold text-ocean-50 mt-1 mb-1">Divemaster & Assistent</h3>
-              <p class="font-body text-sm text-ocean-400 mb-3">Dive Academy Berlin, Deutschland</p>
-              <p class="font-body text-sm text-ocean-200 leading-relaxed">Pool-Training, Assistenz bei OWD-Kursen, Geräteservice und -wartung, Kundenbetreuung und Reisebegleitung.</p>
-            </div>
-          </div>
-          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="right: calc(50% - 8px); background: #1280bc; box-shadow: 0 0 12px rgba(18,128,188,0.6);"></div>
-        </div>
-
-        <!-- Item 4 – links (Ausbildung) -->
-        <div class="relative flex md:justify-start mb-16 timeline-item-left reveal delay-4" style="padding-left: calc(50% + 40px);">
-          <div class="w-full md:max-w-sm">
-            <div class="p-6 rounded-2xl" style="background: rgba(3,17,31,0.6); border: 1px solid rgba(18,128,188,0.15);">
-              <span class="font-mono text-xs text-ocean-400 tracking-wider">2014 – 2016</span>
-              <h3 class="font-display text-xl font-semibold text-ocean-100 mt-1 mb-1">PADI Instructor Development Course</h3>
-              <p class="font-body text-sm text-ocean-400 mb-3">PADI Headquarter, Rancho Santa Margarita</p>
-              <p class="font-body text-sm text-ocean-300 leading-relaxed">IDC Abschluss mit Auszeichnung. Spezialisierung auf Navigation, Tieftauchen und Rescue.</p>
-            </div>
-          </div>
-          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="left: calc(50% - 8px); background: #0a4a70; border: 2px solid #1280bc;"></div>
-        </div>
-
-        <!-- Item 5 – rechts (Studium) -->
-        <div class="relative flex md:justify-end timeline-item-right reveal delay-5" style="padding-right: calc(50% + 40px);">
-          <div class="w-full md:max-w-sm">
-            <div class="p-6 rounded-2xl" style="background: rgba(3,17,31,0.6); border: 1px solid rgba(18,128,188,0.15);">
-              <span class="font-mono text-xs text-ocean-400 tracking-wider">2010 – 2014</span>
-              <h3 class="font-display text-xl font-semibold text-ocean-100 mt-1 mb-1">B.Sc. Meeresbiologie</h3>
-              <p class="font-body text-sm text-ocean-400 mb-3">Universität Kiel, Deutschland</p>
-              <p class="font-body text-sm text-ocean-300 leading-relaxed">Schwerpunkt Korallenökologie und marine Biodiversität. Abschlussarbeit über Riffstrukturen im Roten Meer.</p>
-            </div>
-          </div>
-          <div class="timeline-dot hidden md:flex absolute top-6 items-center justify-center w-4 h-4 rounded-full" style="right: calc(50% - 8px); background: #0a4a70; border: 2px solid #1280bc;"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ CERTS ═══ -->
-  <section id="certs" class="relative py-32 px-6 overflow-hidden" style="background: #010b18;">
-    <div class="max-w-5xl mx-auto">
-      <div class="text-center mb-16 reveal">
-        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Qualifikationen</p>
-        <h2 class="font-display font-light text-ocean-50" style="font-size: clamp(2rem, 4vw, 3.5rem);">
-          Zertifikate &<br/><span class="text-gradient">Lizenzen</span>
-        </h2>
-      </div>
-
-      <!-- Cert cards grid – flip on hover -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-5">
-
-        <!-- Card 1 -->
-        <div class="cert-card h-52 reveal delay-1">
-          <div class="cert-inner relative w-full h-full">
-            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0a4a70); border: 1px solid rgba(45,224,200,0.25);">
-              <div class="text-4xl mb-3">🏆</div>
-              <div class="font-display text-lg font-semibold text-ocean-50">PADI MSDT</div>
-              <div class="font-mono text-xs text-aqua-400 mt-1 tracking-wider">Master Scuba Diver Trainer</div>
-            </div>
-            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(45,224,200,0.4);">
-              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Zertifikat #</div>
-              <div class="font-mono text-lg text-ocean-50 mb-2">A-1234567</div>
-              <div class="font-body text-xs text-ocean-300 leading-relaxed">Ausgestellt 2022 · Gültig weltweit<br/>PADI International</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="cert-card h-52 reveal delay-2">
-          <div class="cert-inner relative w-full h-full">
-            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0e6494); border: 1px solid rgba(18,128,188,0.3);">
-              <div class="text-4xl mb-3">⚓</div>
-              <div class="font-display text-lg font-semibold text-ocean-50">Wreck Diver</div>
-              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Specialty Instructor</div>
-            </div>
-            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.5);">
-              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Specialty</div>
-              <div class="font-body text-sm text-ocean-100 leading-relaxed">Zertifiziert für Wreck Penetration bis 40m Tiefe. 200+ Wracktauchgänge.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 3 -->
-        <div class="cert-card h-52 reveal delay-3">
-          <div class="cert-inner relative w-full h-full">
-            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #0a4a70); border: 1px solid rgba(18,128,188,0.2);">
-              <div class="text-4xl mb-3">🌊</div>
-              <div class="font-display text-lg font-semibold text-ocean-50">Deep Diver</div>
-              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Specialty Instructor</div>
-            </div>
-            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.5);">
-              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Tieftauchen</div>
-              <div class="font-body text-sm text-ocean-100 leading-relaxed">Zertifiziert bis 40m. Dekompressionsmanagement, Gasplanung und Tiefenphysiologie.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 4 -->
-        <div class="cert-card h-52 reveal delay-1">
-          <div class="cert-inner relative w-full h-full">
-            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0a4a70); border: 1px solid rgba(45,224,200,0.15);">
-              <div class="text-4xl mb-3">💨</div>
-              <div class="font-display text-lg font-semibold text-ocean-50">EFR Instructor</div>
-              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Emergency First Response</div>
-            </div>
-            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(45,224,200,0.3);">
-              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Erste Hilfe</div>
-              <div class="font-body text-sm text-ocean-100 leading-relaxed">CPR, AED, Erste Hilfe für Erwachsene, Kinder & Säuglinge. Aktuelle Zertifizierung.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 5 -->
-        <div class="cert-card h-52 reveal delay-2">
-          <div class="cert-inner relative w-full h-full">
-            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.2);">
-              <div class="text-4xl mb-3">🧪</div>
-              <div class="font-display text-lg font-semibold text-ocean-50">Nitrox</div>
-              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Enriched Air Instructor</div>
-            </div>
-            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(18,128,188,0.4);">
-              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">EANx 32/36</div>
-              <div class="font-body text-sm text-ocean-100 leading-relaxed">Erweiterte Tauchzeiten durch optimierten Sauerstoffanteil. Gasanalyse & MOD-Berechnung.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Card 6 -->
-        <div class="cert-card h-52 reveal delay-3">
-          <div class="cert-inner relative w-full h-full">
-            <div class="cert-front w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #073552, #0e6494); border: 1px solid rgba(45,224,200,0.2);">
-              <div class="text-4xl mb-3">🚑</div>
-              <div class="font-display text-lg font-semibold text-ocean-50">Rescue Diver</div>
-              <div class="font-mono text-xs text-ocean-300 mt-1 tracking-wider">Instructor Zertifizierung</div>
-            </div>
-            <div class="cert-back w-full h-full rounded-2xl flex flex-col items-center justify-center p-5 text-center" style="background: linear-gradient(135deg, #042236, #073552); border: 1px solid rgba(45,224,200,0.4);">
-              <div class="font-mono text-xs text-aqua-400 tracking-widest uppercase mb-3">Rettungstauchen</div>
-              <div class="font-body text-sm text-ocean-100 leading-relaxed">Notfallmanagement unter Wasser, Rettung erschöpfter und bewusstloser Taucher.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <p class="text-center font-mono text-xs text-ocean-400 mt-8 tracking-widest">↑ Karten umdrehen zum Anzeigen der Details</p>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ SKILLS ═══ -->
-  <section id="skills" class="relative py-32 px-6 overflow-hidden" style="background: linear-gradient(180deg, #010b18 0%, #03111f 100%);">
-    <div class="max-w-4xl mx-auto">
-      <div class="text-center mb-16 reveal">
-        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Kompetenzen</p>
-        <h2 class="font-display font-light text-ocean-50" style="font-size: clamp(2rem, 4vw, 3.5rem);">
-          Skills &<br/><span class="text-gradient">Sprachen</span>
-        </h2>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-12">
-        <!-- Technical skills -->
-        <div class="reveal-left">
-          <h3 class="font-display text-xl font-semibold text-ocean-100 mb-6">Technische Fertigkeiten</h3>
-          <div class="space-y-5" id="skills-container">
-            <div class="skill-item">
-              <div class="flex justify-between mb-2">
-                <span class="font-body text-sm text-ocean-200">OWD / AOWD Kursleitung</span>
-                <span class="font-mono text-xs text-aqua-400">98%</span>
-              </div>
-              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
-                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="98"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="flex justify-between mb-2">
-                <span class="font-body text-sm text-ocean-200">Wracktauchen</span>
-                <span class="font-mono text-xs text-aqua-400">95%</span>
-              </div>
-              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
-                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="95"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="flex justify-between mb-2">
-                <span class="font-body text-sm text-ocean-200">Nitrox & Gasplanung</span>
-                <span class="font-mono text-xs text-aqua-400">90%</span>
-              </div>
-              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
-                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="90"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="flex justify-between mb-2">
-                <span class="font-body text-sm text-ocean-200">Unterwasserfotografie</span>
-                <span class="font-mono text-xs text-aqua-400">80%</span>
-              </div>
-              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
-                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="80"></div>
-              </div>
-            </div>
-            <div class="skill-item">
-              <div class="flex justify-between mb-2">
-                <span class="font-body text-sm text-ocean-200">Rescue & Notfallmanagement</span>
-                <span class="font-mono text-xs text-aqua-400">92%</span>
-              </div>
-              <div class="h-1.5 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.08);">
-                <div class="skill-fill h-full rounded-full" style="background: linear-gradient(90deg, #0e6494, #2de0c8);" data-width="92"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Languages & Soft skills -->
-        <div class="reveal-right">
-          <h3 class="font-display text-xl font-semibold text-ocean-100 mb-6">Sprachen</h3>
-          <div class="space-y-5 mb-10">
-            <div class="flex items-center gap-4 p-4 rounded-xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.15);">
-              <span class="text-2xl">🇩🇪</span>
-              <div class="flex-1">
-                <div class="font-body text-sm font-medium text-ocean-100">Deutsch</div>
-                <div class="font-mono text-xs text-ocean-400">Muttersprache</div>
-              </div>
-              <div class="flex gap-1">
-               <div style="width:8px;height:8px;border-radius:50%;background:#2de0c8;"></div>
-              </div>
-              <div class="flex gap-1" id="de-dots"></div>
-            </div>
-            <div class="flex items-center gap-4 p-4 rounded-xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.15);">
-              <span class="text-2xl">🇬🇧</span>
-              <div class="flex-1">
-                <div class="font-body text-sm font-medium text-ocean-100">Englisch</div>
-                <div class="font-mono text-xs text-ocean-400">C1 – Verhandlungssicher</div>
-              </div>
-              <div class="flex gap-1" id="en-dots"></div>
-            </div>
-            <div class="flex items-center gap-4 p-4 rounded-xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.15);">
-              <span class="text-2xl">🇹🇭</span>
-              <div class="flex-1">
-                <div class="font-body text-sm font-medium text-ocean-100">Thai</div>
-                <div class="font-mono text-xs text-ocean-400">A2 – Grundkenntnisse</div>
-              </div>
-              <div class="flex gap-1" id="th-dots"></div>
-            </div>
-          </div>
-
-          <h3 class="font-display text-xl font-semibold text-ocean-100 mb-4">Soft Skills</h3>
-          <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Teamführung</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Sicherheitsbewusstsein</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Stressresistenz</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Empathie</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Pädagogik</span>
-            <span class="px-3 py-1.5 rounded-full text-xs font-body" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2); color: #b3def5;">Kommunikation</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ CONTACT ═══ -->
-  <section id="contact" class="relative py-32 px-6 overflow-hidden" style="background: #010b18;">
-    <!-- Decorative blobs -->
-    <div class="absolute bottom-0 left-0 w-96 h-96 rounded-full opacity-5 pointer-events-none -translate-x-1/2 translate-y-1/4" style="background: #1280bc; filter: blur(80px);"></div>
-    <div class="absolute top-0 right-0 w-72 h-72 rounded-full opacity-5 pointer-events-none translate-x-1/2 -translate-y-1/4" style="background: #2de0c8; filter: blur(80px);"></div>
-
-    <div class="max-w-4xl mx-auto">
-      <div class="text-center mb-16 reveal">
-        <p class="font-mono text-aqua-400 text-xs tracking-[0.3em] uppercase mb-4">Let's connect</p>
-        <h2 class="font-display font-light text-ocean-50 mb-5" style="font-size: clamp(2rem, 4vw, 3.5rem);">
-          Ready for you<br/><span class="text-gradient">next Adventure?</span>
-        </h2>
-        <p class="font-body text-ocean-300 max-w-md mx-auto text-base leading-relaxed">
-          Looking for an experienced PADI Instructor for your dive center or resort? I look forward to hearing from you.
-        </p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-10">
-        <!-- Contact info -->
-        <div class="reveal-left space-y-5">
-          <div class="flex items-start gap-4 p-5 rounded-2xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.2);">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background: rgba(45,224,200,0.12);">📍</div>
-            <div>
-              <div class="font-body text-sm font-medium text-ocean-100 mb-0.5">Standort</div>
-              <div class="font-body text-sm text-ocean-400">Koh Tao, Thailand · Weltweit verfügbar</div>
-            </div>
-          </div>
-          <div class="flex items-start gap-4 p-5 rounded-2xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.2);">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background: rgba(45,224,200,0.12);">✉️</div>
-            <div>
-              <div class="font-body text-sm font-medium text-ocean-100 mb-0.5">E-Mail</div>
-              <div class="font-body text-sm text-aqua-400">annitar.pasro@gmail.com</div>
-            </div>
-          </div>
-          <div class="flex items-start gap-4 p-5 rounded-2xl" style="background: rgba(7,53,82,0.3); border: 1px solid rgba(18,128,188,0.2);">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style="background: rgba(45,224,200,0.12);">📱</div>
-            <div>
-              <div class="font-body text-sm font-medium text-ocean-100 mb-0.5">Telefon / WhatsApp</div>
-              <div class="font-body text-sm text-ocean-400">+66 12 345 6789</div>
-            </div>
-          </div>
-          <!-- Social row -->
-          <div class="flex gap-3 pt-2">
-            <a href="#" class="w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all duration-300 hover:scale-110" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2);">💼</a>
-            <a href="#" class="w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all duration-300 hover:scale-110" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2);">📸</a>
-            <a href="#" class="w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all duration-300 hover:scale-110" style="background: rgba(7,53,82,0.5); border: 1px solid rgba(18,128,188,0.2);">🌐</a>
-          </div>
-        </div>
-
-        <!-- Contact form -->
-        <div class="reveal-right">
-          <div class="p-6 rounded-2xl" style="background: rgba(7,53,82,0.2); border: 1px solid rgba(18,128,188,0.2);">
-            <div class="space-y-4">
-              <div>
-                <label class="font-mono text-xs text-ocean-400 tracking-widest uppercase block mb-2">Name</label>
-                <input type="text" placeholder="Dein Name" class="w-full px-4 py-3 rounded-xl text-sm font-body text-ocean-50 placeholder-ocean-600 outline-none transition-all duration-200 focus:border-aqua-400/50" style="background: rgba(1,11,24,0.6); border: 1px solid rgba(18,128,188,0.25);" />
-              </div>
-              <div>
-                <label class="font-mono text-xs text-ocean-400 tracking-widest uppercase block mb-2">E-Mail</label>
-                <input type="email" placeholder="deine@email.com" class="w-full px-4 py-3 rounded-xl text-sm font-body text-ocean-50 placeholder-ocean-600 outline-none transition-all duration-200" style="background: rgba(1,11,24,0.6); border: 1px solid rgba(18,128,188,0.25);" />
-              </div>
-              <div>
-                <label class="font-mono text-xs text-ocean-400 tracking-widest uppercase block mb-2">Nachricht</label>
-                <textarea rows="4" placeholder="Ich bin an einer Zusammenarbeit interessiert..." class="w-full px-4 py-3 rounded-xl text-sm font-body text-ocean-50 placeholder-ocean-600 outline-none resize-none transition-all duration-200" style="background: rgba(1,11,24,0.6); border: 1px solid rgba(18,128,188,0.25);"></textarea>
-              </div>
-              <button class="w-full py-3.5 rounded-xl font-body font-medium text-sm tracking-wide transition-all duration-300 hover:scale-[1.02] hover:shadow-lg" style="background: linear-gradient(135deg, #0e6494, #1280bc); box-shadow: 0 4px 20px rgba(14,100,148,0.35);">
-                Nachricht senden →
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══════════════════════════════════════════ FOOTER ═══ -->
-  <footer class="py-10 px-6 text-center" style="background: #010b18; border-top: 1px solid rgba(18,128,188,0.1);">
-    <div class="font-display text-2xl font-semibold text-gradient mb-2">Annitar Pasro</div>
-    <p class="font-mono text-xs text-ocean-500 tracking-widest">PADI MSDT · #A-1234567 · Koh Tao, Thailand</p>
-    <p class="font-body text-xs text-ocean-700 mt-4">© 2026 Annitar Pasro · Alle Rechte vorbehalten</p>
-  </footer>
-
-  <!-- ═══════════════════════════════════════════ JS ═══ -->
-  <script>
-    // Navbar scroll
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 60) navbar.classList.add('nav-scrolled');
-      else navbar.classList.remove('nav-scrolled');
-    });
-
-    // Mobile menu
-    document.getElementById('mob-menu-btn').addEventListener('click', () => {
-      document.getElementById('mob-menu').classList.toggle('hidden');
-    });
-    function closeMob() { document.getElementById('mob-menu').classList.add('hidden'); }
-
-    // Intersection Observer for reveal animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          // Trigger skill bars
-          const bars = entry.target.querySelectorAll ? entry.target.querySelectorAll('.skill-fill') : [];
-          bars.forEach(bar => { bar.style.width = bar.dataset.width + '%'; });
-        }
+    if(groupMode==='country'){
+      // contiguous runs
+      const runs=[];
+      let cur=null;
+      data.forEach(d=>{ if(!cur||cur.co!==d.co){cur={co:d.co,fl:d.fl,cn:d.cn,days:[d]};runs.push(cur);}else cur.days.push(d); });
+      runs.forEach(r=>{
+        const f=r.days[0].dt,l=r.days[r.days.length-1].dt,range=f===l?f:`${f} – ${l}`;
+        html+=`<div class="country-block">${groupHdr(r.co,r.fl,r.cn,range)}<div class="days-grid">`;
+        r.days.forEach(d=>html+=cardHTML(d));
+        html+=`</div></div>`;
       });
-    }, { threshold: 0.15 });
-
-    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
-
-    // Also observe skill container separately
-    const skillObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.skill-fill').forEach(bar => {
-            setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 200);
-          });
-        }
+    } else if(groupMode==='month'){
+      const map={},order=[];
+      data.forEach(d=>{ const mk=monthLabel(d.iso); if(!map[mk]){map[mk]=[];order.push(mk);} map[mk].push(d); });
+      order.forEach(mk=>{
+        const days=map[mk];
+        html+=`<div class="country-block">${groupHdr('month-hdr','📅',mk,days.length+' days')}<div class="days-grid">`;
+        days.forEach(d=>html+=cardHTML(d));
+        html+=`</div></div>`;
       });
-    }, { threshold: 0.3 });
-    const sc = document.getElementById('skills-container');
-    if (sc) skillObs.observe(sc);
-
-    // Stat counter animation
-    function animateCounter(el, target, duration) {
-      let start = 0;
-      const step = target / (duration / 16);
-      const timer = setInterval(() => {
-        start = Math.min(start + step, target);
-        el.textContent = Math.floor(start).toLocaleString('de-DE');
-        if (start >= target) clearInterval(timer);
-      }, 16);
+    } else {
+      html+=`<div class="country-block"><div class="days-grid">`;
+      data.forEach(d=>html+=cardHTML(d));
+      html+=`</div></div>`;
     }
 
-    const statObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.querySelectorAll('.stat-num').forEach(el => {
-            animateCounter(el, parseInt(el.dataset.target), 1500);
-          });
-          statObs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.5 });
-    document.querySelectorAll('.stat-num').forEach(el => {
-      const parent = el.closest('section') || document.body;
-      statObs.observe(el.parentElement.parentElement);
-    });
+    tl.innerHTML=html;
+    tl.style.opacity='1';
 
-    // Language dots
-    function renderDots(id, filled) {
-      const container = document.getElementById(id);
-      if (!container) return;
-      for (let i = 1; i <= 5; i++) {
-        const dot = document.createElement('div');
-        dot.style.cssText = `width:8px;height:8px;border-radius:50%;${i<=filled?'background:#2de0c8;':'background:rgba(255,255,255,0.12);'}`;
-        container.appendChild(dot);
-      }
-    }
-    renderDots('de-dots', 5);
-    renderDots('en-dots', 4);
-    renderDots('th-dots', 2);
-
-    // Active nav on scroll
-    const sections = ['about','cv','certs','skills','contact'];
-    const navLinks = document.querySelectorAll('.nav-link');
-    const scrollSpy = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          navLinks.forEach(l => l.classList.remove('active'));
-          const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
-          if (active) active.classList.add('active');
+    // observe
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(!e.isIntersecting) return;
+        const el=e.target;
+        if(el.classList.contains('group-header')){ setTimeout(()=>el.classList.add('visible'),80); }
+        else if(el.classList.contains('day-card')){
+          const sib=[...el.parentElement.querySelectorAll('.day-card')];
+          sib.forEach((c,i)=>setTimeout(()=>c.classList.add('visible'),i*45));
         }
+        obs.unobserve(el);
       });
-    }, { threshold: 0.4 });
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) scrollSpy.observe(el);
-    });
-  </script>
+    },{threshold:0.05});
+    tl.querySelectorAll('.group-header,.day-card').forEach(el=>obs.observe(el));
+  },220);
+}
+
+// wire buttons
+document.querySelectorAll('[data-group]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-group]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); groupMode=b.dataset.group; render();
+}));
+document.querySelectorAll('[data-sort]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-sort]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); sortDir=b.dataset.sort; render();
+}));
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); filterCo=b.dataset.filter; render();
+}));
+
+render();
+</script>
 </body>
 </html>
