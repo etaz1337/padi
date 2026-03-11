@@ -1938,7 +1938,7 @@
           co: "de",
           cn: "Germany",
           fl: "🇩🇪",
-          ac: "Free Choose Office",
+          ac: "Free Office Choice",
           ic: "🏢",
           tp: "question",
         },
@@ -2668,6 +2668,16 @@
       </div>
     </div>
 
+    <!-- Office Choice Modal -->
+    <div class="st-modal-backdrop" id="officeModalBackdrop">
+      <div class="st-modal">
+        <button class="st-modal-close" id="officeModalClose" aria-label="Close">✕</button>
+        <div class="st-modal-title">🏢 Free Office Choice</div>
+        <div class="st-modal-sub">i have to work :( but you can choose where</div>
+        <div class="st-trip-grid" id="officeTripGrid"></div>
+      </div>
+    </div>
+
     <script>
       const CITY_DATA = [
         {"city":"Mönchengladbach","country":"Deutschland","flag":"🇩🇪","population":"267.000","description":"Mönchengladbach is the largest city on the left bank of the Lower Rhine in NRW, with over 1,000 years of history – known as the 'City of Vitus' after its patron saint. The city is famous for its textile heritage, Borussia Mönchengladbach football club, and numerous castle parks. With two main train stations, it even holds a Guinness World Record.","places":[{"name":"Schloss Rheydt","maps":"https://www.google.com/maps/search/?api=1&query=Schloss+Rheydt+Mönchengladbach"},{"name":"Museum Abteiberg","maps":"https://www.google.com/maps/search/?api=1&query=Museum+Abteiberg+Mönchengladbach"},{"name":"Münster Basilika St. Vitus","maps":"https://www.google.com/maps/search/?api=1&query=Münster+Basilika+St+Vitus+Mönchengladbach"},{"name":"Borussia-Park","maps":"https://www.google.com/maps/search/?api=1&query=Borussia+Park+Mönchengladbach"},{"name":"Schloss Wickrath","maps":"https://www.google.com/maps/search/?api=1&query=Schloss+Wickrath+Mönchengladbach"}],"restaurants":[{"name":"Rabbit Hole","maps":"https://www.google.com/maps/search/?api=1&query=Rabbit+Hole+Mönchengladbach"},{"name":"Nierskind","maps":"https://www.google.com/maps/search/?api=1&query=Nierskind+Mönchengladbach"},{"name":"Los Amigos","maps":"https://www.google.com/maps/search/?api=1&query=Los+Amigos+Mönchengladbach"},{"name":"Cafe Trotzdem","maps":"https://www.google.com/maps/search/?api=1&query=Cafe+Trotzdem+Mönchengladbach"},{"name":"Asia Garten","maps":"https://www.google.com/maps/search/?api=1&query=Asia+Garten+Mönchengladbach"},{"name":"Cigköfte","maps":"https://www.google.com/maps/search/?api=1&query=Cigköfte+Mönchengladbach"},{"name":"Moshi Bar","maps":"https://www.google.com/maps/search/?api=1&query=Moshi+Bar+Mönchengladbach"}]},
@@ -2782,6 +2792,12 @@
           return;
         }
 
+        // Free Office Choice card → open office modal
+        if (activity.toLowerCase().includes('free office choice')) {
+          openOfficeModal();
+          return;
+        }
+
         const data = getCityData(activity, country);
         if (data) openCityModal(data);
       });
@@ -2832,6 +2848,44 @@
       }
       function closeShortTripModal() {
         stBackdrop.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      // ── OFFICE CHOICE DATA ──
+      const OFFICE_CITIES = [
+        { name: "Düsseldorf", flag: "🇩🇪", drive: "~25 min", maps: "https://maps.google.com/?q=Düsseldorf",  note: "State capital, Rhine vibes & Altbier after work 🍺" },
+        { name: "Cologne",    flag: "🇩🇪", drive: "~35 min", maps: "https://maps.google.com/?q=Köln",         note: "Cathedral city, longest bar in the world 🍻" },
+        { name: "Essen",      flag: "🇩🇪", drive: "~50 min", maps: "https://maps.google.com/?q=Essen",        note: "Culture & green parks in the Ruhr area 🌳" },
+        { name: "Dortmund",   flag: "🇩🇪", drive: "~55 min", maps: "https://maps.google.com/?q=Dortmund",     note: "BVB town, beer gardens & industrial cool ⚽" },
+        { name: "Aachen",     flag: "🇩🇪", drive: "~55 min", maps: "https://maps.google.com/?q=Aachen",       note: "Charlemagne's city, hot springs & student flair 🏛️" },
+        { name: "Bonn",       flag: "🇩🇪", drive: "~55 min", maps: "https://maps.google.com/?q=Bonn",         note: "Former capital, Rhine walks & Beethoven 🎶" },
+      ];
+
+      const officeGrid = document.getElementById('officeTripGrid');
+      officeGrid.innerHTML = OFFICE_CITIES.map(c => `
+        <a class="st-trip-item" href="${c.maps}" target="_blank" rel="noopener">
+          <span class="st-trip-flag">${c.flag}</span>
+          <div class="st-trip-info">
+            <div class="st-trip-name">${c.name}</div>
+            <div class="st-trip-desc">${c.note}</div>
+            <div class="st-trip-meta">
+              <span class="st-trip-time">🚗 ${c.drive} from MG</span>
+            </div>
+          </div>
+          <span class="st-trip-arrow">↗</span>
+        </a>`).join('');
+
+      const officeBackdrop = document.getElementById('officeModalBackdrop');
+      document.getElementById('officeModalClose').addEventListener('click', () => closeOfficeModal());
+      officeBackdrop.addEventListener('click', e => { if (e.target === officeBackdrop) closeOfficeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOfficeModal(); });
+
+      function openOfficeModal() {
+        officeBackdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeOfficeModal() {
+        officeBackdrop.classList.remove('open');
         document.body.style.overflow = '';
       }
     </script>
