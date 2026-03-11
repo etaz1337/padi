@@ -2745,6 +2745,22 @@
       backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
       document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
+      function launchEmojiRain(emojis, count = 30) {
+        for (let i = 0; i < count; i++) {
+          setTimeout(() => {
+            const d = document.createElement('div');
+            d.className = 'donut';
+            d.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            d.style.left = Math.random() * 100 + 'vw';
+            d.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+            const dur = 1.5 + Math.random() * 2;
+            d.style.animationDuration = dur + 's';
+            document.body.appendChild(d);
+            setTimeout(() => d.remove(), dur * 1000);
+          }, i * 60);
+        }
+      }
+
       // Delegate card clicks
       document.getElementById('timeline').addEventListener('click', e => {
         const card = e.target.closest('.day-card');
@@ -2753,6 +2769,12 @@
         if (e.target.closest('a')) return;
         const activity = card.querySelector('.day-activity')?.textContent || '';
         const country  = card.querySelector('.card-country-name')?.textContent || '';
+
+        // Nothing cards → veggie emoji rain
+        if (activity.toLowerCase().includes('nothing')) {
+          launchEmojiRain(['🥕', '🍆', '🥒']);
+          return;
+        }
 
         // Short trip cards → open short trip modal
         if (activity.toLowerCase().includes('short trip')) {
@@ -3080,19 +3102,7 @@
     </style>
     <script>
       document.getElementById('donut-trigger').addEventListener('click', function() {
-        for (let i = 0; i < 30; i++) {
-          setTimeout(() => {
-            const d = document.createElement('div');
-            d.className = 'donut';
-            d.textContent = '🍩';
-            d.style.left = Math.random() * 100 + 'vw';
-            d.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
-            const dur = 1.5 + Math.random() * 2;
-            d.style.animationDuration = dur + 's';
-            document.body.appendChild(d);
-            setTimeout(() => d.remove(), dur * 1000);
-          }, i * 60);
-        }
+        launchEmojiRain(['🍩']);
       });
     </script>
   </body>
