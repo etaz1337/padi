@@ -117,7 +117,7 @@
       }
       .countdown-units {
         display: flex;
-        gap: 0.6rem;
+        gap: clamp(0.25rem, 1.5vw, 0.6rem);
         align-items: flex-start;
       }
       .cd-unit {
@@ -128,15 +128,15 @@
         border: 1px solid rgba(72, 217, 164, 0.2);
         border-radius: 12px;
         padding: 0.7rem 0.9rem 0.5rem;
-        width: 72px;
-        height: 72px;
+        width: clamp(44px, 11vw, 72px);
+        height: clamp(44px, 11vw, 72px);
         flex-shrink: 0;
         backdrop-filter: blur(8px);
         box-shadow: 0 0 18px rgba(72, 217, 164, 0.06);
       }
       .cd-unit.days-unit {
-        width: 90px;
-        height: 90px;
+        width: clamp(56px, 14vw, 90px);
+        height: clamp(56px, 14vw, 90px);
         background: rgba(72, 217, 164, 0.08);
         border-color: rgba(72, 217, 164, 0.4);
         box-shadow: 0 0 28px rgba(72, 217, 164, 0.15);
@@ -144,7 +144,7 @@
       .cd-num {
         font-family: "Outfit", sans-serif;
         font-weight: 800;
-        font-size: clamp(1.4rem, 4vw, 2.2rem);
+        font-size: clamp(0.95rem, 3.5vw, 2.2rem);
         line-height: 1;
         color: var(--mint);
         letter-spacing: -0.02em;
@@ -152,21 +152,21 @@
         font-feature-settings: "tnum";
       }
       .cd-unit.days-unit .cd-num {
-        font-size: clamp(2rem, 6vw, 3.2rem);
+        font-size: clamp(1.3rem, 5vw, 3.2rem);
         color: var(--mint);
         text-shadow: 0 0 20px rgba(72, 217, 164, 0.5);
         font-variant-numeric: tabular-nums;
         font-feature-settings: "tnum";
       }
       .cd-lbl {
-        font-size: 0.45rem;
+        font-size: clamp(0.32rem, 1vw, 0.45rem);
         letter-spacing: 0.2em;
         color: var(--muted);
         text-transform: uppercase;
         margin-top: 0.35rem;
       }
       .cd-sep {
-        font-size: 1.6rem;
+        font-size: clamp(1rem, 3vw, 1.6rem);
         color: rgba(72, 217, 164, 0.3);
         line-height: 1;
         padding-top: 0.5rem;
@@ -175,14 +175,14 @@
       }
       .cd-ms-row {
         margin-top: 0.5rem;
-        font-size: 0.55rem;
-        letter-spacing: 0.3em;
+        font-size: clamp(0.38rem, 1.5vw, 0.55rem);
+        letter-spacing: 0.15em;
         color: rgba(72, 217, 164, 0.5);
         font-family: "Space Mono", monospace;
         font-variant-numeric: tabular-nums;
         font-feature-settings: "tnum";
-        min-width: 420px;
         text-align: center;
+        padding: 0 1rem;
       }
       .cd-ms-val {
         color: rgba(72, 217, 164, 0.8);
@@ -258,6 +258,8 @@
         opacity: 0;
         position: relative;
         z-index: 2;
+        text-align: center;
+        padding: 0 1rem;
       }
       .hero-dates {
         margin-top: 0.4rem;
@@ -268,6 +270,8 @@
         opacity: 0;
         position: relative;
         z-index: 2;
+        text-align: center;
+        padding: 0 1rem;
       }
       @keyframes heroFadeIn {
         from {
