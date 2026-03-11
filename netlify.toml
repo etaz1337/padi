@@ -3,5 +3,5 @@
 
 [[redirects]]
   from = "/"
-  to = "/padi-cv.html"
+  to = "/index.html"
   status = 200
