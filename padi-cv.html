@@ -155,6 +155,8 @@
   @keyframes particleFloat{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:.6;}90%{opacity:.3;}100%{transform:translateY(-20px) rotate(360deg);opacity:0;}}
 
   footer{position:relative;z-index:1;text-align:center;padding:3rem 1rem;font-size:.65rem;color:var(--muted);letter-spacing:.15em;}
+  .city-link { color:var(--gold);text-decoration:none;border-bottom:1px dotted rgba(240,192,64,.4);transition:border-color .2s,color .2s; }
+  .city-link:hover { border-bottom-color:var(--gold);color:#fff; }
 </style>
 </head>
 <body>
@@ -363,6 +365,35 @@ const DAYS = [
 
 const MONTHS = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+// City names → Google Maps links (ordered longest-first to avoid partial matches)
+const CITY_MAP_LINKS = [
+  ['Den Haag', 'https://www.google.com/maps/search/The+Hague,+Netherlands'],
+  ['Düsseldorf', 'https://www.google.com/maps/search/Düsseldorf,+Germany'],
+  ['Frankfurt', 'https://www.google.com/maps/search/Frankfurt,+Germany'],
+  ['Amsterdam', 'https://www.google.com/maps/search/Amsterdam,+Netherlands'],
+  ['Stuttgart', 'https://www.google.com/maps/search/Stuttgart,+Germany'],
+  ['Dortmund', 'https://www.google.com/maps/search/Dortmund,+Germany'],
+  ['Roermond', 'https://www.google.com/maps/search/Roermond,+Netherlands'],
+  ['Brussels', 'https://www.google.com/maps/search/Brussels,+Belgium'],
+  ['Brügge', 'https://www.google.com/maps/search/Bruges,+Belgium'],
+  ['Cologne', 'https://www.google.com/maps/search/Cologne,+Germany'],
+  ['Koblenz', 'https://www.google.com/maps/search/Koblenz,+Germany'],
+  ['Aachen', 'https://www.google.com/maps/search/Aachen,+Germany'],
+  ['Venlo', 'https://www.google.com/maps/search/Venlo,+Netherlands'],
+  ['Essen', 'https://www.google.com/maps/search/Essen,+Germany'],
+  ['Lille', 'https://www.google.com/maps/search/Lille,+France'],
+  ['Eifel', 'https://www.google.com/maps/search/Eifel,+Germany'],
+  ['MG', 'https://www.google.com/maps/search/Mönchengladbach,+Germany'],
+];
+function linkCities(text){
+  let r=text;
+  for(const [name,url] of CITY_MAP_LINKS){
+    const esc=name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    r=r.replace(new RegExp('\\b'+esc+'\\b','g'),`<a href="${url}" target="_blank" rel="noopener" class="city-link">${name}</a>`);
+  }
+  return r;
+}
+
 function monthLabel(iso){ return MONTHS[parseInt(iso.split('-')[1])]+' 2026'; }
 
 function cardHTML(d){
@@ -371,7 +402,7 @@ function cardHTML(d){
       <div><div class="day-weekday">${d.wd}</div><div class="day-date">${d.dt}</div></div>
       <span class="day-icon">${d.ic}</span>
     </div>
-    <div class="day-activity">${d.ac}${d.lm?'&nbsp;<span class="lm-badge">Surprise!</span>':''}</div>
+    <div class="day-activity">${linkCities(d.ac)}${d.lm?'&nbsp;<span class="lm-badge">Surprise!</span>':''}</div>
     <div class="card-bottom"><span class="card-flag">${d.fl}</span><span class="card-country-name">${d.cn}</span></div>
   </div>`;
 }
