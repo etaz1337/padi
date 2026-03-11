@@ -2440,9 +2440,9 @@
         <div class="city-modal-meta" id="cmCountry"></div>
         <div class="city-modal-pop" id="cmPop"></div>
         <p class="city-modal-desc" id="cmDesc"></p>
-        <div class="city-modal-section-title">📍 Sehenswürdigkeiten & Ausflugsziele</div>
+        <div class="city-modal-section-title">📍 Sightseeing</div>
         <ul class="city-modal-list" id="cmPlaces"></ul>
-        <div class="city-modal-section-title">🍽️ Restaurants & Lokale</div>
+        <div class="city-modal-section-title">🍽️ Restaurants</div>
         <ul class="city-modal-list" id="cmRests"></ul>
       </div>
     </div>
@@ -2498,7 +2498,7 @@
         document.getElementById('cmFlag').textContent  = data.flag;
         document.getElementById('cmName').textContent  = data.city;
         document.getElementById('cmCountry').textContent = data.country;
-        document.getElementById('cmPop').textContent   = '👥 ' + data.population + ' Einwohner';
+        document.getElementById('cmPop').textContent   = '👥 ' + data.population + ' Citizens';
         document.getElementById('cmDesc').textContent  = data.description;
 
         const placesList = document.getElementById('cmPlaces');
