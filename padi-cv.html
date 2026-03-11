@@ -96,6 +96,98 @@
         }
       }
 
+      /* COUNTDOWN */
+      .countdown-wrap {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+        animation: heroFadeIn 1.2s ease-out forwards;
+        opacity: 0;
+      }
+      .countdown-label {
+        font-size: 0.6rem;
+        letter-spacing: 0.5em;
+        color: var(--mint);
+        text-transform: uppercase;
+        margin-bottom: 0.8rem;
+        opacity: 0.8;
+      }
+      .countdown-units {
+        display: flex;
+        gap: 0.6rem;
+        align-items: flex-start;
+      }
+      .cd-unit {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(72, 217, 164, 0.2);
+        border-radius: 12px;
+        padding: 0.7rem 0.9rem 0.5rem;
+        width: 72px;
+        height: 72px;
+        flex-shrink: 0;
+        backdrop-filter: blur(8px);
+        box-shadow: 0 0 18px rgba(72, 217, 164, 0.06);
+      }
+      .cd-unit.days-unit {
+        width: 90px;
+        height: 90px;
+        background: rgba(72, 217, 164, 0.08);
+        border-color: rgba(72, 217, 164, 0.4);
+        box-shadow: 0 0 28px rgba(72, 217, 164, 0.15);
+      }
+      .cd-num {
+        font-family: "Outfit", sans-serif;
+        font-weight: 800;
+        font-size: clamp(1.4rem, 4vw, 2.2rem);
+        line-height: 1;
+        color: var(--mint);
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+      }
+      .cd-unit.days-unit .cd-num {
+        font-size: clamp(2rem, 6vw, 3.2rem);
+        color: var(--mint);
+        text-shadow: 0 0 20px rgba(72, 217, 164, 0.5);
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+      }
+      .cd-lbl {
+        font-size: 0.45rem;
+        letter-spacing: 0.2em;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-top: 0.35rem;
+      }
+      .cd-sep {
+        font-size: 1.6rem;
+        color: rgba(72, 217, 164, 0.3);
+        line-height: 1;
+        padding-top: 0.5rem;
+        font-family: "Outfit", sans-serif;
+        font-weight: 300;
+      }
+      .cd-ms-row {
+        margin-top: 0.5rem;
+        font-size: 0.55rem;
+        letter-spacing: 0.3em;
+        color: rgba(72, 217, 164, 0.5);
+        font-family: "Space Mono", monospace;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
+        min-width: 420px;
+        text-align: center;
+      }
+      .cd-ms-val {
+        color: rgba(72, 217, 164, 0.8);
+      }
+
       .hero-title {
         font-family: "Outfit", sans-serif;
         font-weight: 900;
@@ -883,6 +975,68 @@
     <!-- HERO -->
     <section class="hero">
       <div class="earth-ring"></div>
+
+      <!-- COUNTDOWN -->
+      <div class="countdown-wrap" id="countdown-wrap">
+        <div class="countdown-label">✈️ &nbsp; departure countdown &nbsp; ✈️</div>
+        <div class="countdown-units">
+          <div class="cd-unit days-unit">
+            <span class="cd-num" id="cd-days">---</span>
+            <span class="cd-lbl">days</span>
+          </div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-hours">--</span>
+            <span class="cd-lbl">hours</span>
+          </div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-min">--</span>
+            <span class="cd-lbl">min</span>
+          </div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-sec">--</span>
+            <span class="cd-lbl">sec</span>
+          </div>
+          <div class="cd-sep">.</div>
+          <div class="cd-unit">
+            <span class="cd-num" id="cd-ms">---</span>
+            <span class="cd-lbl">ms</span>
+          </div>
+        </div>
+        <div class="cd-ms-row">total milliseconds remaining: <span class="cd-ms-val" id="cd-total-ms">---</span></div>
+      </div>
+      <script>
+        (function() {
+          // Departure: 25 June 2026 00:00:00 local time
+          const DEPARTURE = new Date('2026-06-25T00:00:00');
+          function pad(n, len) { return String(Math.floor(n)).padStart(len || 2, '0'); }
+          function tick() {
+            const now = Date.now();
+            const diff = DEPARTURE.getTime() - now;
+            if (diff <= 0) {
+              document.getElementById('countdown-wrap').innerHTML =
+                '<div class="countdown-label" style="font-size:1rem;color:var(--mint);letter-spacing:0.3em">🛫 &nbsp; WE HAVE ARRIVED! &nbsp; 🛫</div>';
+              return;
+            }
+            const ms   = diff % 1000;
+            const secs = Math.floor(diff / 1000) % 60;
+            const mins = Math.floor(diff / 60000) % 60;
+            const hrs  = Math.floor(diff / 3600000) % 24;
+            const days = Math.floor(diff / 86400000);
+            document.getElementById('cd-days').textContent  = days;
+            document.getElementById('cd-hours').textContent = pad(hrs);
+            document.getElementById('cd-min').textContent   = pad(mins);
+            document.getElementById('cd-sec').textContent   = pad(secs);
+            document.getElementById('cd-ms').textContent    = pad(ms, 3);
+            document.getElementById('cd-total-ms').textContent = diff.toLocaleString();
+          }
+          tick();
+          setInterval(tick, 13); // ~75fps for smooth ms display
+        })();
+      </script>
+
       <h1 class="hero-title">Europe Trip<br />2026</h1>
       <div class="heart-badge">
         <span class="heart">♥</span>
