@@ -65,8 +65,8 @@
         transform: translate(-50%, -50%);
         border-radius: 50%;
         box-shadow: 5px -3px 10px 3px #5e90f1;
-        height: 700px;
-        width: 700px;
+        height: 500px;
+        width: 500px;
         overflow: hidden;
         z-index: 0;
         pointer-events: none;
@@ -75,9 +75,9 @@
         animation: rotate-night 80s linear infinite;
         background-image: url(https://www.solarsystemscope.com/textures/download/2k_earth_nightmap.jpg);
         background-size: 200%;
-        height: 700px;
+        height: 500px;
         position: absolute;
-        width: 700px;
+        width: 500px;
         z-index: 2;
       }
       .day {
@@ -87,10 +87,10 @@
         border-left: solid 1px black;
         border-radius: 50%;
         box-shadow: 5px 0 20px 10px #040615 inset;
-        height: 700px;
+        height: 500px;
         margin-left: 154px;
         position: absolute;
-        width: 700px;
+        width: 500px;
         z-index: 3;
       }
       .clouds {
@@ -99,20 +99,20 @@
         background-size: 200%;
         border-radius: 50%;
         box-shadow: 5px 0 20px 10px #040615 inset, -9px 0px 20px 10px #5e90f1 inset;
-        height: 700px;
+        height: 500px;
         margin-left: 140px;
         opacity: 0.45;
         position: absolute;
-        width: 700px;
+        width: 500px;
         z-index: 4;
       }
       .globe-inner-shadow {
         background: transparent;
         border-radius: 50%;
         box-shadow: -5px 0 10px 1px #152b57 inset, 5px 0 10px 1px #040615 inset;
-        height: 700px;
+        height: 500px;
         position: absolute;
-        width: 700px;
+        width: 500px;
         z-index: 5;
       }
       @keyframes rotate-day {
@@ -441,57 +441,80 @@
 
       /* ARRIVAL */
       .arrival-banner {
-        background: linear-gradient(
-          135deg,
-          rgba(72, 217, 164, 0.15),
-          rgba(72, 217, 164, 0.05)
-        );
-        border: 1px solid rgba(72, 217, 164, 0.3);
-        border-radius: 16px;
-        padding: 1.5rem 2rem;
+        height: 500px;
+        background-image: url('europe_night.jpg');
+        background-size: cover;
+        background-position: center 30%;
+        border-radius: 20px;
+        padding: 15rem 2rem;
         margin: 2rem auto;
-        max-width: 700px;
+        max-width: 900px;
+        width: calc(100% - 3rem);
         text-align: center;
         position: relative;
         z-index: 1;
-        animation: arrivalPulse 3s infinite;
+        overflow: hidden;
+        box-shadow:
+          0 0 0 1px rgba(255,255,255,0.06),
+          0 8px 60px rgba(0,0,0,0.6),
+          0 0 80px rgba(10,14,39,0.8);
+        animation: arrivalPulse 4s infinite;
+      }
+      .arrival-banner::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse at center, rgba(5,8,26,0.25) 0%, rgba(5,8,26,0.55) 100%);
+        z-index: 0;
+        border-radius: 20px;
+      }
+      /* Smooth fade into page at top and bottom */
+      .arrival-banner::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(to bottom,
+            var(--deep) 0%,
+            transparent 18%,
+            transparent 82%,
+            var(--deep) 100%
+          ),
+          linear-gradient(to right,
+            var(--deep) 0%,
+            transparent 10%,
+            transparent 90%,
+            var(--deep) 100%
+          );
+        z-index: 1;
+        border-radius: 20px;
+        pointer-events: none;
+      }
+      .arrival-banner > * {
+        position: relative;
+        z-index: 2;
       }
       @keyframes arrivalPulse {
-        0%,
-        100% {
-          box-shadow: 0 0 20px rgba(72, 217, 164, 0.1);
-        }
-        50% {
-          box-shadow: 0 0 40px rgba(72, 217, 164, 0.25);
-        }
+        0%, 100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 60px rgba(0,0,0,0.6), 0 0 60px rgba(10,14,39,0.8); }
+        50%       { box-shadow: 0 0 0 1px rgba(255,255,255,0.10), 0 8px 60px rgba(0,0,0,0.6), 0 0 90px rgba(10,14,39,0.9); }
       }
       .arrival-banner h2 {
         font-family: "Outfit", sans-serif;
-        font-weight: 800;
-        font-size: 1.6rem;
-        color: var(--mint);
-        margin-bottom: 0.3rem;
+        font-weight: 400;
+        font-size: clamp(2rem, 6vw, 3.8rem);
+        letter-spacing: 0.05em;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
       .arrival-banner p {
-        font-size: 0.75rem;
-        color: var(--muted);
-        letter-spacing: 0.15em;
-      }
-      .plane-arrival {
-        font-size: 3rem;
-        display: inline-block;
-        animation: planeLand 1.5s ease-out forwards;
-        margin-bottom: 0.5rem;
-      }
-      @keyframes planeLand {
-        from {
-          transform: translateX(-100px) rotate(-15deg);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0) rotate(0deg);
-          opacity: 1;
-        }
+        font-size: 0.55rem;
+        color: rgba(232,224,208,0.75);
+        letter-spacing: 0.2em;
+        text-shadow: 0 1px 6px rgba(0,0,0,0.8);
       }
 
       /* STATS */
@@ -1351,10 +1374,9 @@
     <!-- ARRIVAL -->
     <div
       class="arrival-banner"
-      style="opacity: 0; animation: heroFadeIn 1s 3.5s forwards"
+      style="opacity: 0; animation: heroFadeIn 1s 1.5s forwards"
     >
-      <div class="plane-arrival">🛬</div>
-      <h2>Welcome to Germany!</h2>
+      <h2>Welcome to Europe</h2>
       <p>THURSDAY, 25 JUNE 2026 &nbsp;·&nbsp; FRANKFURT → DÜSSELDORF</p>
     </div>
 
