@@ -56,44 +56,77 @@
         overflow: hidden;
         z-index: 1;
       }
-      .earth-ring {
+
+      /* GLOBE */
+      .planet-container {
         position: absolute;
-        bottom: -120px;
+        top: 50%;
         left: 50%;
-        transform: translateX(-50%);
-        width: 900px;
-        height: 900px;
+        transform: translate(-50%, -50%);
         border-radius: 50%;
-        background: radial-gradient(
-          ellipse at 40% 35%,
-          #1a3a6e 0%,
-          #0a1a3a 50%,
-          #04091a 100%
-        );
-        box-shadow:
-          0 0 80px rgba(30, 80, 180, 0.4),
-          inset 0 0 120px rgba(0, 0, 0, 0.6);
-        animation: earthPulse 8s ease-in-out infinite;
+        box-shadow: 5px -3px 10px 3px #5e90f1;
+        height: 700px;
+        width: 700px;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
       }
-      .earth-ring::before {
-        content: "";
+      .night {
+        animation: rotate-night 80s linear infinite;
+        background-image: url(https://www.solarsystemscope.com/textures/download/2k_earth_nightmap.jpg);
+        background-size: 200%;
+        height: 700px;
         position: absolute;
-        inset: 10px;
-        border-radius: 50%;
-        border: 1px solid rgba(100, 160, 255, 0.15);
+        width: 700px;
+        z-index: 2;
       }
-      @keyframes earthPulse {
-        0%,
-        100% {
-          box-shadow:
-            0 0 80px rgba(30, 80, 180, 0.4),
-            inset 0 0 120px rgba(0, 0, 0, 0.6);
-        }
-        50% {
-          box-shadow:
-            0 0 120px rgba(30, 80, 180, 0.6),
-            inset 0 0 120px rgba(0, 0, 0, 0.6);
-        }
+      .day {
+        animation: rotate-day 80s linear infinite;
+        background-image: url(https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg);
+        background-size: 200%;
+        border-left: solid 1px black;
+        border-radius: 50%;
+        box-shadow: 5px 0 20px 10px #040615 inset;
+        height: 700px;
+        margin-left: 154px;
+        position: absolute;
+        width: 700px;
+        z-index: 3;
+      }
+      .clouds {
+        animation: rotate-day 50s linear infinite, spin-clouds 100s ease infinite;
+        background-image: url(https://www.solarsystemscope.com/textures/download/2k_earth_clouds.jpg);
+        background-size: 200%;
+        border-radius: 50%;
+        box-shadow: 5px 0 20px 10px #040615 inset, -9px 0px 20px 10px #5e90f1 inset;
+        height: 700px;
+        margin-left: 140px;
+        opacity: 0.45;
+        position: absolute;
+        width: 700px;
+        z-index: 4;
+      }
+      .globe-inner-shadow {
+        background: transparent;
+        border-radius: 50%;
+        box-shadow: -5px 0 10px 1px #152b57 inset, 5px 0 10px 1px #040615 inset;
+        height: 700px;
+        position: absolute;
+        width: 700px;
+        z-index: 5;
+      }
+      @keyframes rotate-day {
+        0%   { background-position: 120% 0; }
+        100% { background-position: -80% 0; }
+      }
+      @keyframes rotate-night {
+        0%   { background-position: calc(120% + 154px) 0; }
+        100% { background-position: calc(-80% + 154px) 0; }
+      }
+      @keyframes spin-clouds {
+        0%   { transform: rotate(0deg); }
+        50%  { transform: rotate(20deg); }
+        100% { transform: rotate(0deg); }
       }
 
       /* COUNTDOWN */
@@ -1032,7 +1065,12 @@
 
     <!-- HERO -->
     <section class="hero">
-      <div class="earth-ring"></div>
+      <div class="planet-container">
+        <div class="night"></div>
+        <div class="day"></div>
+        <div class="clouds"></div>
+        <div class="globe-inner-shadow"></div>
+      </div>
 
       <!-- COUNTDOWN -->
       <div class="countdown-wrap" id="countdown-wrap">
