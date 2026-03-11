@@ -1369,7 +1369,7 @@
         <span class="stat-value">11</span
         ><span class="stat-label">Last Minute</span>
       </div>
-      <div class="stat-item">
+      <div class="stat-item" id="donut-trigger" style="cursor:pointer;">
         <span class="stat-value" style="color: var(--coral)">♥</span
         ><span class="stat-label">A + A</span>
       </div>
@@ -2970,6 +2970,40 @@
         // Fix map render after show
         setTimeout(() => leafletMap.invalidateSize(), 100);
       }
+    </script>
+
+    <style>
+      #donut-trigger { cursor: pointer; user-select: none; }
+      #donut-trigger:active { transform: scale(0.93); }
+      .donut {
+        position: fixed;
+        pointer-events: none;
+        z-index: 9999;
+        animation: donutFall linear forwards;
+        top: -60px;
+      }
+      @keyframes donutFall {
+        0%   { transform: translateY(0)     rotate(0deg);   opacity: 1; }
+        80%  { opacity: 1; }
+        100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+      }
+    </style>
+    <script>
+      document.getElementById('donut-trigger').addEventListener('click', function() {
+        for (let i = 0; i < 30; i++) {
+          setTimeout(() => {
+            const d = document.createElement('div');
+            d.className = 'donut';
+            d.textContent = '🍩';
+            d.style.left = Math.random() * 100 + 'vw';
+            d.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+            const dur = 1.5 + Math.random() * 2;
+            d.style.animationDuration = dur + 's';
+            document.body.appendChild(d);
+            setTimeout(() => d.remove(), dur * 1000);
+          }, i * 60);
+        }
+      });
     </script>
   </body>
 </html>
