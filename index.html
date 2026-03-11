@@ -1058,7 +1058,136 @@
       }
       .city-modal-list a:hover { background: rgba(240,192,64,0.08); border-color: rgba(240,192,64,0.3); color: var(--gold); }
       .day-card { cursor: pointer; }
+
+      /* VIEW TOGGLE */
+      .view-toggle-wrap {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        gap: 0;
+      }
+      .view-btn {
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        letter-spacing: 0.12em;
+        padding: 0.55rem 1.4rem;
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.04);
+        color: var(--muted);
+        transition: all 0.2s;
+      }
+      .view-btn:first-child { border-radius: 10px 0 0 10px; }
+      .view-btn:last-child  { border-radius: 0 10px 10px 0; border-left: none; }
+      .view-btn.active {
+        background: rgba(240,192,64,0.18);
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+      .view-btn:hover:not(.active) {
+        background: rgba(240,192,64,0.08);
+        color: var(--text);
+      }
+
+      /* MAP VIEW */
+      #map-view {
+        display: none;
+        position: relative;
+        z-index: 1;
+        max-width: 960px;
+        margin: 0 auto 3rem;
+        padding: 0 1.5rem;
+      }
+      #map-view.active { display: block; }
+      #leaflet-map {
+        width: 100%;
+        height: 620px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 0 40px rgba(0,0,0,0.6);
+        overflow: hidden;
+      }
+      /* Leaflet dark theme */
+      .leaflet-container { background: #05081a; font-family: "Space Mono", monospace; }
+      .leaflet-control-zoom a {
+        background: #0e1230 !important;
+        color: var(--gold) !important;
+        border-color: rgba(240,192,64,0.3) !important;
+      }
+      .leaflet-control-zoom a:hover {
+        background: rgba(240,192,64,0.15) !important;
+      }
+      .leaflet-control-attribution {
+        background: rgba(5,8,26,0.8) !important;
+        color: var(--muted) !important;
+        font-size: 0.45rem !important;
+      }
+      .leaflet-control-attribution a { color: var(--muted) !important; }
+      /* Popup styling */
+      .custom-popup .leaflet-popup-content-wrapper {
+        background: linear-gradient(135deg, #0d1228, #080d1e) !important;
+        border: 1px solid rgba(240,192,64,0.3) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.8), 0 0 20px rgba(240,192,64,0.05) !important;
+        color: #e8e0d0 !important;
+        padding: 14px 16px !important;
+      }
+      .custom-popup .leaflet-popup-tip-container .leaflet-popup-tip {
+        background: #0d1228 !important;
+        box-shadow: none !important;
+      }
+      .custom-popup .leaflet-popup-close-button {
+        color: #7a7a9a !important;
+        font-size: 1.1rem !important;
+        top: 8px !important; right: 10px !important;
+      }
+      .custom-popup .leaflet-popup-close-button:hover { color: #f0c040 !important; }
+      /* Tooltip */
+      .leaflet-tooltip {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .leaflet-tooltip::before { display: none !important; }
+
+      .map-controls-row {
+        display: flex;
+        align-items: center;
+        margin-top: 0.8rem;
+        padding: 0 0.2rem;
+      }
+
+      /* Legend */
+      .map-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1rem;
+        justify-content: center;
+      }
+      .map-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.55rem;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+      .map-legend-dot {
+        width: 12px; height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      /* Journey view wrapper */
+      #journey-view { display: block; }
+      #journey-view.hidden { display: none; }
     </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   </head>
   <body>
     <canvas id="stars-canvas"></canvas>
@@ -1248,6 +1377,25 @@
 
     <div class="divider">The Journey</div>
 
+    <!-- VIEW TOGGLE -->
+    <div class="view-toggle-wrap">
+      <button class="view-btn active" id="btn-journey" onclick="switchView('journey')">🗓️ &nbsp;Journey</button>
+      <button class="view-btn" id="btn-map" onclick="switchView('map')">🗺️ &nbsp;Map</button>
+    </div>
+
+    <!-- MAP VIEW -->
+    <div id="map-view">
+      <div id="leaflet-map"></div>
+      <div class="map-controls-row">
+        <button class="ctrl-btn active" id="lm-toggle">✈️  Last Minute Options ON</button>
+        <span class="ctrl-label" style="margin-left:0.5rem;">— toggle last-minute pins</span>
+      </div>
+      <div class="map-legend" id="map-legend"></div>
+    </div>
+
+    <!-- JOURNEY VIEW wrapper start -->
+    <div id="journey-view">
+
     <!-- CONTROLS -->
     <div class="controls-wrap">
       <div class="controls">
@@ -1317,6 +1465,7 @@
       </p>
     </div>
 
+    </div><!-- /journey-view -->
     <footer>
       ✈️ &nbsp; Bangkok → Frankfurt → Europe → Frankfurt → Bangkok &nbsp; ✈️<br />
       <span style="margin-top: 0.5rem; display: block"
@@ -2573,6 +2722,254 @@
         const data = getCityData(activity, country);
         if (data) openCityModal(data);
       });
+    </script>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+      // ── VIEW SWITCHER ──
+      function switchView(v) {
+        const jv = document.getElementById('journey-view');
+        const mv = document.getElementById('map-view');
+        const bj = document.getElementById('btn-journey');
+        const bm = document.getElementById('btn-map');
+        if (v === 'map') {
+          jv.classList.add('hidden');
+          mv.classList.add('active');
+          bj.classList.remove('active');
+          bm.classList.add('active');
+          initMap();
+        } else {
+          mv.classList.remove('active');
+          jv.classList.remove('hidden');
+          bm.classList.remove('active');
+          bj.classList.add('active');
+        }
+      }
+
+      // ── MAP DESTINATIONS ──
+      // Each entry: city, lat, lng, flag, country code, date range, activities
+      const DESTINATIONS = [
+        // ── FIXED ITINERARY ──
+        { city:"Bangkok",         lat:13.756,  lng:100.502, fl:"🇹🇭", co:"th",  lm:false, dates:"Departure",            days:["25 Jun – Depart BKK → FRA ✈️"] },
+        { city:"Frankfurt",       lat:50.110,  lng:8.682,   fl:"🇩🇪", co:"de",  lm:false, dates:"25 Jun (arrival)",      days:["25 Jun – Arrival FRA → Düsseldorf"] },
+        { city:"Mönchengladbach", lat:51.196,  lng:6.435,   fl:"🇩🇪", co:"de",  lm:false, dates:"26 Jun – 2 Jul, 7 Sep", days:["Home base 🏡","Multiple day trips","Return home 7 Sep"] },
+        { city:"Cologne",         lat:50.938,  lng:6.960,   fl:"🇩🇪", co:"de",  lm:false, dates:"30 Jun",               days:["30 Jun – Cologne ⛪"] },
+        { city:"Amsterdam",       lat:52.374,  lng:4.890,   fl:"🇳🇱", co:"nl",  lm:false, dates:"3–4 Jul",              days:["3 Jul – Amsterdam 🌷","4 Jul – Amsterdam 🚲"] },
+        { city:"Den Haag",        lat:52.070,  lng:4.300,   fl:"🇳🇱", co:"nl",  lm:false, dates:"5 Jul",               days:["5 Jul – Den Haag 🏖️"] },
+        { city:"Roermond",        lat:51.194,  lng:5.987,   fl:"🇳🇱", co:"nl",  lm:false, dates:"6 Jul",               days:["6 Jul – Roermond 🛍️"] },
+        { city:"Venlo",           lat:51.370,  lng:6.172,   fl:"🇳🇱", co:"nl",  lm:false, dates:"7 Jul",               days:["7 Jul – Venlo 🌸"] },
+        { city:"Düsseldorf",      lat:51.227,  lng:6.773,   fl:"🇩🇪", co:"de",  lm:false, dates:"8–9 Jul",             days:["8 Jul – Düsseldorf 🍺","9 Jul – Düsseldorf 🛍️"] },
+        { city:"Dortmund",        lat:51.514,  lng:7.466,   fl:"🇩🇪", co:"de",  lm:false, dates:"10–11 Jul",           days:["10 Jul – Dortmund ⚽","11 Jul – Dortmund 🏭"] },
+        { city:"Essen",           lat:51.458,  lng:7.015,   fl:"🇩🇪", co:"de",  lm:false, dates:"12–13 Jul",           days:["12 Jul – Essen 🏭","13 Jul – Zeche Zollverein 🏛️"] },
+        { city:"Brussels",        lat:50.850,  lng:4.352,   fl:"🇧🇪", co:"be",  lm:false, dates:"14–16 Jul",           days:["14 Jul – Brussels 🍫","15 Jul – Brussels 🏛️","16 Jul – Brussels 🍺"] },
+        { city:"Lille",           lat:50.629,  lng:3.057,   fl:"🇫🇷", co:"fr",  lm:false, dates:"17–18 Jul",           days:["17 Jul – Lille 🥐","18 Jul – Lille 🏙️"] },
+        { city:"Brügge",          lat:51.209,  lng:3.224,   fl:"🇧🇪", co:"be",  lm:false, dates:"19–20 Jul",           days:["19 Jul – Brügge 🏰","20 Jul – Brügge 🍺"] },
+        { city:"Aachen",          lat:50.776,  lng:6.084,   fl:"🇩🇪", co:"de",  lm:false, dates:"21–22 Jul",           days:["21 Jul – Aachen ⛪","22 Jul – Aachen 🍪"] },
+        { city:"Eifel",           lat:50.358,  lng:6.688,   fl:"🇩🇪", co:"de",  lm:false, dates:"23–25 Jul",           days:["23 Jul – Eifel 🌲","24 Jul – Nürburgring 🏎️","25 Jul – Eifel 🦌"] },
+        { city:"Stuttgart",       lat:48.775,  lng:9.182,   fl:"🇩🇪", co:"de",  lm:false, dates:"26–28 Jul",           days:["26 Jul – Stuttgart 🚗","27 Jul – Mercedes Museum 🏎️","28 Jul – Stuttgart 🍷"] },
+        { city:"Koblenz",         lat:50.356,  lng:7.589,   fl:"🇩🇪", co:"de",  lm:false, dates:"8–9 Sep",             days:["8 Sep – Koblenz 🏰","9 Sep – Koblenz 🍷"] },
+        { city:"Switzerland",     lat:46.948,  lng:7.448,   fl:"🇨🇭", co:"ch",  lm:false, dates:"10–11 Sep",           days:["10 Sep – Switzerland ⛰️","11 Sep – Switzerland 🍫"] },
+        { city:"Frankfurt",       lat:50.050,  lng:8.560,   fl:"🇩🇪", co:"de",  lm:false, dates:"13 Sep (departure)",  days:["13 Sep – Frankfurt → Bangkok ✈️😭"] },
+
+        // ── LAST MINUTE OPTIONS ── (1 Aug – 12 Aug window)
+        // 🇪🇸 Spain
+        { city:"Barcelona",       lat:41.390,  lng:2.154,   fl:"🇪🇸", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🌡️ Hot & sunny in Aug","🏖️ Beach + Gothic Quarter","💶 Budget flights from €30–60"] },
+        { city:"Madrid",          lat:40.416,  lng:-3.703,  fl:"🇪🇸", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","🎨 Prado Museum","🥩 Tapas & sangria","💶 Flights from €40–80"] },
+        { city:"Valencia",        lat:39.470,  lng:-0.376,  fl:"🇪🇸", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","🏖️ Beautiful beaches","🥘 Paella birthplace","💶 Budget flights from €35"] },
+        { city:"Málaga",          lat:36.721,  lng:-4.421,  fl:"🇪🇸", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~3h from Düsseldorf","☀️ Warmest city in Aug","🏖️ Costa del Sol","💶 Ryanair from €25–50"] },
+        // 🇮🇹 Italy
+        { city:"Rome",            lat:41.902,  lng:12.496,  fl:"🇮🇹", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🏛️ Colosseum & Vatican","🍕 World-class food","💶 Flights from €40–90"] },
+        { city:"Milan",           lat:45.465,  lng:9.186,   fl:"🇮🇹", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🛍️ Fashion capital","🍝 Amazing food scene","💶 Flights from €30–70"] },
+        { city:"Venice",          lat:45.440,  lng:12.320,  fl:"🇮🇹", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🚤 Canals & gondolas","🎭 Unique city","💶 Flights from €35–80"] },
+        // 🇵🇹 Portugal
+        { city:"Lisbon",          lat:38.717,  lng:-9.139,  fl:"🇵🇹", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","🍷 Fantastic wine & food","🎵 Fado music","💶 Flights from €50–100"] },
+        { city:"Porto",           lat:41.157,  lng:-8.629,  fl:"🇵🇹", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","🍷 Port wine tasting","🌉 Dom Luís Bridge","💶 Flights from €40–80"] },
+        // 🇨🇿 Czech Republic
+        { city:"Prague",          lat:50.075,  lng:14.438,  fl:"🇨🇿", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🏰 Fairy-tale old town","🍺 Cheapest beer in EU","💶 Flights from €30–60"] },
+        // 🇭🇺 Hungary
+        { city:"Budapest",        lat:47.498,  lng:19.039,  fl:"🇭🇺", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🛁 Famous thermal baths","🏰 Buda Castle","💶 Flights from €35–70"] },
+        // 🇦🇹 Austria
+        { city:"Vienna",          lat:48.208,  lng:16.373,  fl:"🇦🇹", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🎵 Classical music & opera","☕ Coffee house culture","💶 Flights from €30–70"] },
+        // 🇬🇷 Greece
+        { city:"Athens",          lat:37.983,  lng:23.728,  fl:"🇬🇷", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","🏛️ Acropolis & history","☀️ Perfect Aug weather","💶 Flights from €50–100"] },
+        { city:"Thessaloniki",    lat:40.640,  lng:22.945,  fl:"🇬🇷", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🍢 Amazing street food","🏖️ Beach nearby","💶 Budget flights from €40"] },
+        // 🇵🇱 Poland
+        { city:"Kraków",          lat:50.062,  lng:19.937,  fl:"🇵🇱", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🏰 Medieval old town (UNESCO)","🍻 Buzzing nightlife","💶 Flights from €25–50"] },
+        { city:"Warsaw",          lat:52.229,  lng:21.012,  fl:"🇵🇱", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🏙️ Rebuilt historic centre","🍕 Cheap food & drinks","💶 Flights from €30–60"] },
+        // 🇸🇰 Slovakia
+        { city:"Bratislava",      lat:48.148,  lng:17.107,  fl:"🇸🇰", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🏰 Fairy-tale old town","💰 Cheapest city in EU","💶 Flights from €25–50"] },
+        // 🇷🇴 Romania
+        { city:"Bucharest",       lat:44.426,  lng:26.103,  fl:"🇷🇴", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","🏙️ Paris of the East","🍷 Great wine & food","💶 Flights from €40–80"] },
+        // 🇩🇰 Denmark
+        { city:"Copenhagen",      lat:55.676,  lng:12.568,  fl:"🇩🇰", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~1.5h from Düsseldorf","🚲 World's most liveable city","🌭 Street food markets","💶 Flights from €40–90"] },
+        // 🇸🇪 Sweden
+        { city:"Stockholm",       lat:59.332,  lng:18.065,  fl:"🇸🇪", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🏙️ City on 14 islands","🎨 ABBA Museum","💶 Flights from €50–100"] },
+        // 🇳🇴 Norway
+        { city:"Oslo",            lat:59.913,  lng:10.752,  fl:"🇳🇴", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🛳️ Fjord day trips","🎨 Munch Museum","💶 Flights from €50–100"] },
+        // 🇭🇷 Croatia
+        { city:"Dubrovnik",       lat:42.651,  lng:18.094,  fl:"🇭🇷", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🏰 Game of Thrones city","🌊 Adriatic coast","💶 Flights from €50–100"] },
+        { city:"Split",           lat:43.508,  lng:16.440,  fl:"🇭🇷", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2h from Düsseldorf","🏛️ Diocletian's Palace","🏖️ Stunning beaches","💶 Flights from €40–80"] },
+        // 🇦🇱 Albania
+        { city:"Tirana",          lat:41.328,  lng:19.818,  fl:"🇦🇱", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~2.5h from Düsseldorf","💰 Cheapest country in Europe","🏔️ Albanian Riviera nearby","💶 Flights from €30–60"] },
+        // 🇮🇸 Iceland
+        { city:"Reykjavík",       lat:64.128,  lng:-21.827, fl:"🇮🇸", co:"lm",  lm:true,  dates:"Last Minute Option",  days:["✈️ ~3h from Düsseldorf","🌋 Volcanoes & geysers","♨️ Blue Lagoon","💶 Flights from €60–120"] },
+      ];
+
+      const CO_COLORS = {
+        de: '#f0c040', nl: '#ff8833', be: '#ffd700',
+        fr: '#6688ff', ch: '#ff4466', eu: '#a78bfa', th: '#48d9a4',
+        lm: '#ff5fa0'
+      };
+
+      let mapInitialized = false;
+      let leafletMap = null;
+      let lmVisible = true;
+
+      function initMap() {
+        if (mapInitialized) return;
+        mapInitialized = true;
+
+        // Dark stylish tile layer from CartoDB
+        leafletMap = L.map('leaflet-map', {
+          center: [50.5, 10.0],
+          zoom: 5,
+          zoomControl: false,
+        });
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© OpenStreetMap © CARTO',
+          subdomains: 'abcd',
+          maxZoom: 19,
+        }).addTo(leafletMap);
+
+        // Custom zoom control position
+        L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
+
+        // ── Route line (fixed itinerary only) ──
+        const routePoints = DESTINATIONS
+          .filter(d => !d.lm && d.co !== 'th')
+          .map(d => [d.lat, d.lng]);
+
+        // Animated dashed route
+        L.polyline(routePoints, {
+          color: 'rgba(240,192,64,0.25)',
+          weight: 3,
+          dashArray: null,
+        }).addTo(leafletMap);
+        L.polyline(routePoints, {
+          color: 'rgba(240,192,64,0.7)',
+          weight: 1.5,
+          dashArray: '8 6',
+        }).addTo(leafletMap);
+
+        // ── Build markers ──
+        const lmLayerGroup = L.layerGroup().addTo(leafletMap);
+        const fixedLayerGroup = L.layerGroup().addTo(leafletMap);
+
+        DESTINATIONS.forEach(d => {
+          const color = CO_COLORS[d.co] || '#fff';
+          const isLM = d.lm;
+          const size = isLM ? 10 : (d.city === 'Mönchengladbach' ? 20 : 14);
+
+          const markerHtml = isLM
+            ? `<div style="
+                width:${size}px; height:${size}px;
+                border-radius:50%;
+                background: radial-gradient(circle at 35% 35%, #ff9fd0, #ff5fa0);
+                border: 1.5px solid rgba(255,255,255,0.4);
+                box-shadow: 0 0 8px rgba(255,95,160,0.7);
+              "></div>`
+            : `<div style="
+                width:${size}px; height:${size}px;
+                border-radius:50%;
+                background: radial-gradient(circle at 35% 35%, ${color}dd, ${color}88);
+                border: 2px solid rgba(255,255,255,0.6);
+                box-shadow: 0 0 ${size}px ${color}99, 0 0 4px rgba(0,0,0,0.8);
+              "></div>`;
+
+          const icon = L.divIcon({
+            html: markerHtml,
+            className: '',
+            iconSize: [size, size],
+            iconAnchor: [size/2, size/2],
+            popupAnchor: [0, -size/2 - 4],
+          });
+
+          const badge = isLM
+            ? `<span style="background:rgba(255,95,160,0.2);border:1px solid rgba(255,95,160,0.5);color:#ff9fd0;font-size:0.45rem;letter-spacing:0.2em;padding:2px 7px;border-radius:20px;text-transform:uppercase;">✈️ Last Minute Option</span>`
+            : `<span style="background:rgba(240,192,64,0.15);border:1px solid rgba(240,192,64,0.4);color:var(--gold);font-size:0.45rem;letter-spacing:0.2em;padding:2px 7px;border-radius:20px;text-transform:uppercase;">📍 Planned Stop</span>`;
+
+          const daysHtml = d.days.map(day => `<div style="padding:2px 0;">• ${day}</div>`).join('');
+          const popupContent = `
+            <div style="min-width:200px;">
+              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                <span style="font-size:1.8rem;line-height:1;">${d.fl}</span>
+                <div>
+                  <div style="font-family:Outfit,sans-serif;font-weight:800;font-size:1.1rem;color:#f0c040;line-height:1.1;">${d.city}</div>
+                  <div style="font-size:0.55rem;color:#7a7a9a;letter-spacing:0.15em;margin-top:2px;">📅 ${d.dates}</div>
+                </div>
+              </div>
+              ${badge}
+              <div style="margin-top:0.6rem;font-size:0.7rem;color:#c8c0b0;line-height:1.7;">${daysHtml}</div>
+            </div>`;
+
+          const marker = L.marker([d.lat, d.lng], { icon })
+            .bindPopup(popupContent, { maxWidth: 280, className: 'custom-popup' });
+
+          if (isLM) lmLayerGroup.addLayer(marker);
+          else fixedLayerGroup.addLayer(marker);
+        });
+
+        // ── City name tooltips for fixed stops ──
+        DESTINATIONS.filter(d => !d.lm && d.co !== 'th').forEach(d => {
+          L.tooltip({
+            permanent: true,
+            direction: 'top',
+            offset: [0, -10],
+            opacity: 1,
+          })
+          .setContent(`<span style="font-size:0.5rem;font-family:Space Mono,monospace;color:#f0c040;background:rgba(5,8,26,0.9);padding:2px 6px;border-radius:4px;border:1px solid rgba(240,192,64,0.2);white-space:nowrap;">${d.city}</span>`)
+          .setLatLng([d.lat, d.lng])
+          .addTo(leafletMap);
+        });
+
+        // ── Toggle button for last-minute pins ──
+        const toggleBtn = document.getElementById('lm-toggle');
+        toggleBtn.addEventListener('click', () => {
+          lmVisible = !lmVisible;
+          if (lmVisible) {
+            leafletMap.addLayer(lmLayerGroup);
+            toggleBtn.classList.add('active');
+            toggleBtn.textContent = '✈️  Last Minute Options ON';
+          } else {
+            leafletMap.removeLayer(lmLayerGroup);
+            toggleBtn.classList.remove('active');
+            toggleBtn.textContent = '✈️  Last Minute Options OFF';
+          }
+        });
+
+        // ── Build legend ──
+        const legend = document.getElementById('map-legend');
+        const legendItems = [
+          { co:'de', label:'Germany' },
+          { co:'nl', label:'Netherlands' },
+          { co:'be', label:'Belgium' },
+          { co:'fr', label:'France' },
+          { co:'ch', label:'Switzerland' },
+          { co:'lm', label:'Last Minute Option' },
+          { co:'th', label:'Bangkok' },
+        ];
+        legendItems.forEach(({ co, label }) => {
+          const c = CO_COLORS[co];
+          legend.innerHTML += `<div class="map-legend-item">
+            <div class="map-legend-dot" style="background:${c};box-shadow:0 0 6px ${c}88;"></div>
+            ${label}
+          </div>`;
+        });
+
+        // Fix map render after show
+        setTimeout(() => leafletMap.invalidateSize(), 100);
+      }
     </script>
   </body>
 </html>
