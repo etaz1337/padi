@@ -971,6 +971,60 @@
         border-bottom-color: var(--gold);
         color: #fff;
       }
+
+      /* CITY MODAL */
+      .city-modal-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(6px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .city-modal-backdrop.open { display: flex; }
+      .city-modal {
+        background: linear-gradient(135deg, #0e1230, #080d1e);
+        border: 1px solid rgba(240,192,64,0.25);
+        border-radius: 20px;
+        max-width: 560px;
+        width: 100%;
+        max-height: 88vh;
+        overflow-y: auto;
+        padding: 2rem;
+        position: relative;
+        box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(240,192,64,0.07);
+        animation: modalIn 0.25s ease-out;
+      }
+      @keyframes modalIn {
+        from { opacity: 0; transform: scale(0.94) translateY(16px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .city-modal-close {
+        position: absolute; top: 1rem; right: 1.1rem;
+        background: none; border: none; color: var(--muted);
+        font-size: 1.4rem; cursor: pointer; line-height: 1; transition: color 0.2s;
+      }
+      .city-modal-close:hover { color: var(--gold); }
+      .city-modal-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.4rem; }
+      .city-modal-flag { font-size: 2.2rem; }
+      .city-modal-name { font-family: "Outfit", sans-serif; font-weight: 800; font-size: 1.8rem; color: var(--gold); line-height: 1; }
+      .city-modal-meta { font-size: 0.55rem; letter-spacing: 0.3em; color: var(--muted); text-transform: uppercase; margin-bottom: 0.3rem; padding-left: 3rem; }
+      .city-modal-pop { font-size: 0.6rem; letter-spacing: 0.2em; color: var(--mint); text-transform: uppercase; margin-bottom: 1rem; padding-left: 3rem; }
+      .city-modal-desc { font-size: 0.78rem; color: var(--text); line-height: 1.7; margin-bottom: 1.4rem; opacity: 0.85; }
+      .city-modal-section-title { font-size: 0.5rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; margin-top: 1.2rem; }
+      .city-modal-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+      .city-modal-list a {
+        display: flex; align-items: center; gap: 0.6rem;
+        font-size: 0.75rem; color: var(--text); text-decoration: none;
+        padding: 0.5rem 0.8rem; border-radius: 8px;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+      }
+      .city-modal-list a:hover { background: rgba(240,192,64,0.08); border-color: rgba(240,192,64,0.3); color: var(--gold); }
+      .day-card { cursor: pointer; }
     </style>
   </head>
   <body>
@@ -1042,11 +1096,11 @@
       </script>
 
       <h1 class="hero-title">Europe Trip<br />2026</h1>
-      <div class="heart-badge">
+      <!-- <div class="heart-badge">
         <span class="heart">♥</span>
         <span class="aa-text">A + A</span>
         <span class="heart">♥</span>
-      </div>
+      </div> -->
       <p class="hero-sub">Bangkok → Frankfurt → The World</p>
       <p class="hero-dates">
         25 June – 13 September 2026 &nbsp;·&nbsp; 81 Days
@@ -2373,6 +2427,114 @@
       );
 
       render();
+    </script>
+
+    <!-- CITY INFO MODAL -->
+    <div class="city-modal-backdrop" id="cityModalBackdrop">
+      <div class="city-modal" id="cityModal">
+        <button class="city-modal-close" id="cityModalClose" aria-label="Schließen">✕</button>
+        <div class="city-modal-header">
+          <span class="city-modal-flag" id="cmFlag"></span>
+          <span class="city-modal-name" id="cmName"></span>
+        </div>
+        <div class="city-modal-meta" id="cmCountry"></div>
+        <div class="city-modal-pop" id="cmPop"></div>
+        <p class="city-modal-desc" id="cmDesc"></p>
+        <div class="city-modal-section-title">📍 Sehenswürdigkeiten & Ausflugsziele</div>
+        <ul class="city-modal-list" id="cmPlaces"></ul>
+        <div class="city-modal-section-title">🍽️ Restaurants & Lokale</div>
+        <ul class="city-modal-list" id="cmRests"></ul>
+      </div>
+    </div>
+
+    <script>
+      const CITY_DATA = [
+        {"city":"Mönchengladbach","country":"Deutschland","flag":"🇩🇪","population":"267.000","description":"Mönchengladbach is the largest city on the left bank of the Lower Rhine in NRW, with over 1,000 years of history – known as the 'City of Vitus' after its patron saint. The city is famous for its textile heritage, Borussia Mönchengladbach football club, and numerous castle parks. With two main train stations, it even holds a Guinness World Record.","places":[{"name":"Schloss Rheydt","maps":"https://www.google.com/maps/search/?api=1&query=Schloss+Rheydt+Mönchengladbach"},{"name":"Museum Abteiberg","maps":"https://www.google.com/maps/search/?api=1&query=Museum+Abteiberg+Mönchengladbach"},{"name":"Münster Basilika St. Vitus","maps":"https://www.google.com/maps/search/?api=1&query=Münster+Basilika+St+Vitus+Mönchengladbach"},{"name":"Borussia-Park","maps":"https://www.google.com/maps/search/?api=1&query=Borussia+Park+Mönchengladbach"},{"name":"Schloss Wickrath","maps":"https://www.google.com/maps/search/?api=1&query=Schloss+Wickrath+Mönchengladbach"}],"restaurants":[{"name":"Rabbit Hole","maps":"https://www.google.com/maps/search/?api=1&query=Rabbit+Hole+Mönchengladbach"},{"name":"Nierskind","maps":"https://www.google.com/maps/search/?api=1&query=Nierskind+Mönchengladbach"},{"name":"Los Amigos","maps":"https://www.google.com/maps/search/?api=1&query=Los+Amigos+Mönchengladbach"},{"name":"Cafe Trotzdem","maps":"https://www.google.com/maps/search/?api=1&query=Cafe+Trotzdem+Mönchengladbach"},{"name":"Asia Garten","maps":"https://www.google.com/maps/search/?api=1&query=Asia+Garten+Mönchengladbach"},{"name":"Cigköfte","maps":"https://www.google.com/maps/search/?api=1&query=Cigköfte+Mönchengladbach"},{"name":"Moshi Bar","maps":"https://www.google.com/maps/search/?api=1&query=Moshi+Bar+Mönchengladbach"}]},
+        {"city":"Düsseldorf","country":"Deutschland","flag":"🇩🇪","population":"650.000","description":"Düsseldorf is the state capital of NRW and a cosmopolitan metropolis on the Rhine. Its old town is known as the 'longest bar in the world' with over 260 pubs. Fashion, art, the Königsallee boulevard and Altbier define city life – plus one of the most notable Japanese quarters in Europe.","places":[{"name":"Altstadt Düsseldorf","maps":"https://www.google.com/maps/search/?api=1&query=Altstadt+Düsseldorf"},{"name":"Königsallee","maps":"https://www.google.com/maps/search/?api=1&query=Königsallee+Düsseldorf"},{"name":"MedienHafen","maps":"https://www.google.com/maps/search/?api=1&query=MedienHafen+Düsseldorf"},{"name":"Rheinturm","maps":"https://www.google.com/maps/search/?api=1&query=Rheinturm+Düsseldorf"},{"name":"Schloss Benrath","maps":"https://www.google.com/maps/search/?api=1&query=Schloss+Benrath+Düsseldorf"},{"name":"Immermannstraße – Little Tokyo","maps":"https://www.google.com/maps/search/?api=1&query=Immermannstraße+Düsseldorf"}],"restaurants":[{"name":"Okinii","maps":"https://www.google.com/maps/search/?api=1&query=Okinii+Düsseldorf"},{"name":"Mongo's","maps":"https://www.google.com/maps/search/?api=1&query=Mongos+Restaurant+Düsseldorf"},{"name":"Brauerei Füchschen","maps":"https://www.google.com/maps/search/?api=1&query=Brauerei+Füchschen+Düsseldorf"},{"name":"Brauerei Uerige","maps":"https://www.google.com/maps/search/?api=1&query=Brauerei+Uerige+Düsseldorf"},{"name":"Takumi Ramen","maps":"https://www.google.com/maps/search/?api=1&query=Takumi+Ramen+Düsseldorf"}]},
+        {"city":"Köln","country":"Deutschland","flag":"🇩🇪","population":"1.010.000","description":"Cologne is the largest city in North Rhine-Westphalia, situated on the Rhine. The city is over 2,000 years old and famous for its Gothic cathedral, the annual carnival, and its vibrant cultural scene. Cologne is also a major hub for media, trade fairs, and universities.","places":[{"name":"Kölner Dom","maps":"https://www.google.com/maps/search/?api=1&query=Kölner+Dom"},{"name":"Altstadt Köln","maps":"https://www.google.com/maps/search/?api=1&query=Altstadt+Köln"},{"name":"Schokoladenmuseum Köln","maps":"https://www.google.com/maps/search/?api=1&query=Schokoladenmuseum+Köln"},{"name":"Rheinauhafen","maps":"https://www.google.com/maps/search/?api=1&query=Rheinauhafen+Köln"},{"name":"Flora und Botanischer Garten","maps":"https://www.google.com/maps/search/?api=1&query=Flora+Botanischer+Garten+Köln"}],"restaurants":[{"name":"Früh am Dom","maps":"https://www.google.com/maps/search/?api=1&query=Früh+am+Dom+Köln"},{"name":"Bei Oma Kleinmann","maps":"https://www.google.com/maps/search/?api=1&query=Bei+Oma+Kleinmann+Köln"},{"name":"Haxenhaus","maps":"https://www.google.com/maps/search/?api=1&query=Haxenhaus+Köln"},{"name":"Peters Brauhaus","maps":"https://www.google.com/maps/search/?api=1&query=Peters+Brauhaus+Köln"},{"name":"Neni Köln","maps":"https://www.google.com/maps/search/?api=1&query=Neni+Köln"}]},
+        {"city":"Dortmund","country":"Deutschland","flag":"🇩🇪","population":"595.000","description":"Dortmund is one of the largest cities in the Ruhr area, known for its industrial history and the football club Borussia Dortmund. Today the city is an important centre for technology and science. Large parks and museums shape the urban landscape.","places":[{"name":"Signal Iduna Park","maps":"https://www.google.com/maps/search/?api=1&query=Signal+Iduna+Park+Dortmund"},{"name":"Westfalenpark","maps":"https://www.google.com/maps/search/?api=1&query=Westfalenpark+Dortmund"},{"name":"Dortmunder U","maps":"https://www.google.com/maps/search/?api=1&query=Dortmunder+U"},{"name":"Phoenix See","maps":"https://www.google.com/maps/search/?api=1&query=Phoenix+See+Dortmund"},{"name":"Zoo Dortmund","maps":"https://www.google.com/maps/search/?api=1&query=Zoo+Dortmund"}],"restaurants":[{"name":"Pfefferkorn","maps":"https://www.google.com/maps/search/?api=1&query=Pfefferkorn+Dortmund"},{"name":"Mongo's Dortmund","maps":"https://www.google.com/maps/search/?api=1&query=Mongos+Dortmund"},{"name":"Namu","maps":"https://www.google.com/maps/search/?api=1&query=Namu+Dortmund"},{"name":"Olafs","maps":"https://www.google.com/maps/search/?api=1&query=Olafs+Dortmund"},{"name":"60 Seconds to Napoli","maps":"https://www.google.com/maps/search/?api=1&query=60+Seconds+to+Napoli+Dortmund"}]},
+        {"city":"Eifel","country":"Deutschland","flag":"🇩🇪","population":"~250.000 (Region)","description":"The Eifel is one of Germany's most beautiful upland regions, shaped by extinct volcanoes, deep crater lakes (Maare) and dense forests. The Eifel National Park offers pristine nature. Historic towns like Monschau and the Nürburgring racing circuit make the region a wonderfully varied destination.","places":[{"name":"Nationalpark Eifel","maps":"https://www.google.com/maps/search/?api=1&query=Nationalpark+Eifel"},{"name":"Nürburgring","maps":"https://www.google.com/maps/search/?api=1&query=Nürburgring+Eifel"},{"name":"Laacher See","maps":"https://www.google.com/maps/search/?api=1&query=Laacher+See+Eifel"},{"name":"Monschau Altstadt","maps":"https://www.google.com/maps/search/?api=1&query=Monschau+Altstadt"},{"name":"Gerolsteiner Dolomiten","maps":"https://www.google.com/maps/search/?api=1&query=Gerolsteiner+Dolomiten+Eifel"}],"restaurants":[{"name":"Historische Weinwirtschaft Monschau","maps":"https://www.google.com/maps/search/?api=1&query=Historische+Weinwirtschaft+Monschau"},{"name":"Eifeler Hof Gerolstein","maps":"https://www.google.com/maps/search/?api=1&query=Eifeler+Hof+Gerolstein"},{"name":"Wirtshaus Zum Schwan Mayen","maps":"https://www.google.com/maps/search/?api=1&query=Wirtshaus+Zum+Schwan+Mayen"},{"name":"Zum Goldenen Pflug Adenau","maps":"https://www.google.com/maps/search/?api=1&query=Zum+Goldenen+Pflug+Adenau"},{"name":"Landhotel Rosenberg","maps":"https://www.google.com/maps/search/?api=1&query=Landhotel+Rosenberg+Eifel"}]},
+        {"city":"Brüssel","country":"Belgien","flag":"🇧🇪","population":"1.200.000","description":"Brussels is the capital of Belgium and home to many institutions of the European Union. The city is known for its historic old town centred around the Grand Place, as well as Belgian chocolate and waffles. Brussels is a major political and cultural hub of Europe.","places":[{"name":"Grand Place","maps":"https://www.google.com/maps/search/?api=1&query=Grand+Place+Brussels"},{"name":"Atomium","maps":"https://www.google.com/maps/search/?api=1&query=Atomium+Brussels"},{"name":"Manneken Pis","maps":"https://www.google.com/maps/search/?api=1&query=Manneken+Pis"},{"name":"Mont des Arts","maps":"https://www.google.com/maps/search/?api=1&query=Mont+des+Arts+Brussels"},{"name":"Parc du Cinquantenaire","maps":"https://www.google.com/maps/search/?api=1&query=Parc+du+Cinquantenaire"}],"restaurants":[{"name":"Chez Leon","maps":"https://www.google.com/maps/search/?api=1&query=Chez+Leon+Brussels"},{"name":"Fin de Siecle","maps":"https://www.google.com/maps/search/?api=1&query=Fin+de+Siecle+Brussels"},{"name":"Le Marmiton","maps":"https://www.google.com/maps/search/?api=1&query=Le+Marmiton+Brussels"},{"name":"Noordzee Mer du Nord","maps":"https://www.google.com/maps/search/?api=1&query=Noordzee+Mer+du+Nord+Brussels"},{"name":"The Lobster House","maps":"https://www.google.com/maps/search/?api=1&query=The+Lobster+House+Brussels"}]},
+        {"city":"Amsterdam","country":"Niederlande","flag":"🇳🇱","population":"920.000","description":"Amsterdam is the capital of the Netherlands, world-famous for its canals, museums and historic architecture. The city is one of Europe's most important cultural and tourism centres. Bicycles, waterways and art define the character of the city.","places":[{"name":"Rijksmuseum","maps":"https://www.google.com/maps/search/?api=1&query=Rijksmuseum+Amsterdam"},{"name":"Van Gogh Museum","maps":"https://www.google.com/maps/search/?api=1&query=Van+Gogh+Museum+Amsterdam"},{"name":"Anne Frank Haus","maps":"https://www.google.com/maps/search/?api=1&query=Anne+Frank+Haus"},{"name":"Dam Square","maps":"https://www.google.com/maps/search/?api=1&query=Dam+Square+Amsterdam"},{"name":"Vondelpark","maps":"https://www.google.com/maps/search/?api=1&query=Vondelpark+Amsterdam"}],"restaurants":[{"name":"Foodhallen","maps":"https://www.google.com/maps/search/?api=1&query=Foodhallen+Amsterdam"},{"name":"The Pantry","maps":"https://www.google.com/maps/search/?api=1&query=The+Pantry+Amsterdam"},{"name":"Cafe de Klos","maps":"https://www.google.com/maps/search/?api=1&query=Cafe+de+Klos+Amsterdam"},{"name":"Pllek","maps":"https://www.google.com/maps/search/?api=1&query=Pllek+Amsterdam"},{"name":"Moeders","maps":"https://www.google.com/maps/search/?api=1&query=Moeders+Amsterdam"}]},
+        {"city":"Den Haag","country":"Niederlande","flag":"🇳🇱","population":"569.000","description":"The Hague is the seat of the Dutch government and parliament, as well as the residence of the royal family. The city hosts the International Court of Justice and is known as the 'City of Peace and Justice'. The Mauritshuis museum displays 'Girl with a Pearl Earring' – one of the most famous paintings in the world.","places":[{"name":"Binnenhof","maps":"https://www.google.com/maps/search/?api=1&query=Binnenhof+Den+Haag"},{"name":"Mauritshuis Museum","maps":"https://www.google.com/maps/search/?api=1&query=Mauritshuis+Den+Haag"},{"name":"Scheveningen Strand","maps":"https://www.google.com/maps/search/?api=1&query=Scheveningen+Strand+Den+Haag"},{"name":"Madurodam","maps":"https://www.google.com/maps/search/?api=1&query=Madurodam+Den+Haag"},{"name":"Panorama Mesdag","maps":"https://www.google.com/maps/search/?api=1&query=Panorama+Mesdag+Den+Haag"}],"restaurants":[{"name":"Brasserie Saur","maps":"https://www.google.com/maps/search/?api=1&query=Brasserie+Saur+Den+Haag"},{"name":"Shirasagi","maps":"https://www.google.com/maps/search/?api=1&query=Shirasagi+Restaurant+Den+Haag"},{"name":"De Basiliek","maps":"https://www.google.com/maps/search/?api=1&query=De+Basiliek+Den+Haag"},{"name":"Seinpost Scheveningen","maps":"https://www.google.com/maps/search/?api=1&query=Seinpost+Scheveningen+Den+Haag"},{"name":"Foodhallen Den Haag","maps":"https://www.google.com/maps/search/?api=1&query=Foodhallen+Den+Haag"}]},
+        {"city":"Lille","country":"Frankreich","flag":"🇫🇷","population":"235.000","description":"Lille is the capital of the northern French region Hauts-de-France, sitting in the triangle between Paris, London and Brussels. The city dazzles with its Flemish-influenced old town of colourful Baroque houses and the Grand Place. Lille was European Capital of Culture in 2004 and is famous for the Braderie de Lille – the largest flea market in Europe.","places":[{"name":"Grand Place – Place du Général de Gaulle","maps":"https://www.google.com/maps/search/?api=1&query=Grand+Place+Lille+France"},{"name":"Palais des Beaux-Arts","maps":"https://www.google.com/maps/search/?api=1&query=Palais+des+Beaux+Arts+Lille"},{"name":"Vieux-Lille (Altstadt)","maps":"https://www.google.com/maps/search/?api=1&query=Vieux-Lille"},{"name":"Citadelle de Lille","maps":"https://www.google.com/maps/search/?api=1&query=Citadelle+de+Lille"},{"name":"La Piscine – Musée Roubaix","maps":"https://www.google.com/maps/search/?api=1&query=La+Piscine+Musée+Roubaix"}],"restaurants":[{"name":"Bloempot","maps":"https://www.google.com/maps/search/?api=1&query=Bloempot+Restaurant+Lille"},{"name":"La Laiterie","maps":"https://www.google.com/maps/search/?api=1&query=La+Laiterie+Restaurant+Lille"},{"name":"Estaminet Gantois","maps":"https://www.google.com/maps/search/?api=1&query=Estaminet+Gantois+Lille"},{"name":"La Chicorée","maps":"https://www.google.com/maps/search/?api=1&query=La+Chicorée+Lille"},{"name":"Au Vieux de la Vieille","maps":"https://www.google.com/maps/search/?api=1&query=Au+Vieux+de+la+Vieille+Lille"}]},
+        {"city":"Aachen","country":"Deutschland","flag":"🇩🇪","population":"252.000","description":"Aachen is located at the tripoint of Germany, Belgium and the Netherlands, and is one of the most historically significant cities in Europe. It is particularly known for Aachen Cathedral, the coronation church of many German kings. Today Aachen is also a major university city, home to the renowned RWTH.","places":[{"name":"Aachener Dom","maps":"https://www.google.com/maps/search/?api=1&query=Aachener+Dom"},{"name":"Elisenbrunnen","maps":"https://www.google.com/maps/search/?api=1&query=Elisenbrunnen+Aachen"},{"name":"Rathaus Aachen","maps":"https://www.google.com/maps/search/?api=1&query=Rathaus+Aachen"},{"name":"Carolus Thermen","maps":"https://www.google.com/maps/search/?api=1&query=Carolus+Thermen+Aachen"},{"name":"Dreiländereck Vaals","maps":"https://www.google.com/maps/search/?api=1&query=Dreiländereck+Vaals"}],"restaurants":[{"name":"Am Knipp","maps":"https://www.google.com/maps/search/?api=1&query=Am+Knipp+Aachen"},{"name":"Hanswurst","maps":"https://www.google.com/maps/search/?api=1&query=Hanswurst+Aachen"},{"name":"La Becasse","maps":"https://www.google.com/maps/search/?api=1&query=La+Becasse+Aachen"},{"name":"Homeburgers","maps":"https://www.google.com/maps/search/?api=1&query=Homeburgers+Aachen"},{"name":"Oebel","maps":"https://www.google.com/maps/search/?api=1&query=Oebel+Aachen"}]},
+        {"city":"Roermond","country":"Niederlande","flag":"🇳🇱","population":"60.000","description":"Roermond is located in the south of the Netherlands close to the German border. The city is best known for the Designer Outlet Roermond, one of the largest shopping destinations in the region. Historic buildings and the Meuse river define the city's character.","places":[{"name":"Designer Outlet Roermond","maps":"https://www.google.com/maps/search/?api=1&query=Designer+Outlet+Roermond"},{"name":"Munsterkerk","maps":"https://www.google.com/maps/search/?api=1&query=Munsterkerk+Roermond"},{"name":"Marktplatz Roermond","maps":"https://www.google.com/maps/search/?api=1&query=Markt+Roermond"},{"name":"St. Christophorus Kathedrale","maps":"https://www.google.com/maps/search/?api=1&query=St+Christoffelkathedraal+Roermond"},{"name":"Maasplassen","maps":"https://www.google.com/maps/search/?api=1&query=Maasplassen+Roermond"}],"restaurants":[{"name":"Bistro TWO","maps":"https://www.google.com/maps/search/?api=1&query=Bistro+TWO+Roermond"},{"name":"Da Vinci","maps":"https://www.google.com/maps/search/?api=1&query=Restaurant+Da+Vinci+Roermond"},{"name":"Sushi & Grill","maps":"https://www.google.com/maps/search/?api=1&query=Sushi+Grill+Roermond"},{"name":"Brasserie LOUIS","maps":"https://www.google.com/maps/search/?api=1&query=Brasserie+Louis+Roermond"},{"name":"Aruna Cuisine","maps":"https://www.google.com/maps/search/?api=1&query=Aruna+Cuisine+Roermond"}]},
+        {"city":"Venlo","country":"Niederlande","flag":"🇳🇱","population":"102.000","description":"Venlo is situated right on the German border and is a popular destination for shopping and short breaks. The historic old town with its town hall and many cafés attracts visitors from both Germany and the Netherlands. The city is scenically located along the Meuse river.","places":[{"name":"Rathaus Venlo","maps":"https://www.google.com/maps/search/?api=1&query=Stadhuis+Venlo"},{"name":"Maasboulevard","maps":"https://www.google.com/maps/search/?api=1&query=Maasboulevard+Venlo"},{"name":"Limburgs Museum","maps":"https://www.google.com/maps/search/?api=1&query=Limburgs+Museum+Venlo"},{"name":"Julianapark","maps":"https://www.google.com/maps/search/?api=1&query=Julianapark+Venlo"},{"name":"Floriade Gelände","maps":"https://www.google.com/maps/search/?api=1&query=Floriade+Venlo"}],"restaurants":[{"name":"Chez L'Heureux","maps":"https://www.google.com/maps/search/?api=1&query=Chez+LHeureux+Venlo"},{"name":"Bistro de Luif","maps":"https://www.google.com/maps/search/?api=1&query=Bistro+de+Luif+Venlo"},{"name":"Grenswerk Café","maps":"https://www.google.com/maps/search/?api=1&query=Grenswerk+Cafe+Venlo"},{"name":"Hagerhof","maps":"https://www.google.com/maps/search/?api=1&query=Hagerhof+Venlo"},{"name":"Restaurant Valuas","maps":"https://www.google.com/maps/search/?api=1&query=Valuas+Venlo"}]},
+        {"city":"Koblenz","country":"Deutschland","flag":"🇩🇪","population":"115.000","description":"Koblenz lies at the famous Deutsches Eck, where the Rhine and Moselle rivers meet. The city has over 2,000 years of history and was once an important Roman settlement. The Electoral Palace, Ehrenbreitstein Fortress and the picturesque old town make Koblenz one of the most visited destinations on the Middle Rhine.","places":[{"name":"Deutsches Eck","maps":"https://www.google.com/maps/search/?api=1&query=Deutsches+Eck+Koblenz"},{"name":"Festung Ehrenbreitstein","maps":"https://www.google.com/maps/search/?api=1&query=Festung+Ehrenbreitstein+Koblenz"},{"name":"Kurfürstliches Schloss","maps":"https://www.google.com/maps/search/?api=1&query=Kurfürstliches+Schloss+Koblenz"},{"name":"Altstadt Koblenz","maps":"https://www.google.com/maps/search/?api=1&query=Altstadt+Koblenz"},{"name":"Basilika St. Kastor","maps":"https://www.google.com/maps/search/?api=1&query=Basilika+St+Kastor+Koblenz"}],"restaurants":[{"name":"Weinhaus Hubertus","maps":"https://www.google.com/maps/search/?api=1&query=Weinhaus+Hubertus+Koblenz"},{"name":"Café Milani","maps":"https://www.google.com/maps/search/?api=1&query=Café+Milani+Koblenz"},{"name":"Ristorante Da Vinci Koblenz","maps":"https://www.google.com/maps/search/?api=1&query=Ristorante+Da+Vinci+Koblenz"},{"name":"Zum Weißen Schwanen","maps":"https://www.google.com/maps/search/?api=1&query=Zum+Weißen+Schwanen+Koblenz"},{"name":"Altes Brauhaus Koblenz","maps":"https://www.google.com/maps/search/?api=1&query=Altes+Brauhaus+Koblenz"}]},
+        {"city":"Stuttgart","country":"Deutschland","flag":"🇩🇪","population":"635.000","description":"Stuttgart is the capital of Baden-Württemberg and home to global corporations such as Mercedes-Benz, Porsche and Bosch. The city is nestled among vineyards and hills, offering a unique blend of high-tech industry, culture and wine-growing tradition. The Mercedes-Benz Museum and the Stuttgart Spring Festival are major crowd-pullers.","places":[{"name":"Mercedes-Benz Museum","maps":"https://www.google.com/maps/search/?api=1&query=Mercedes-Benz+Museum+Stuttgart"},{"name":"Porsche Museum","maps":"https://www.google.com/maps/search/?api=1&query=Porsche+Museum+Stuttgart"},{"name":"Schlossplatz Stuttgart","maps":"https://www.google.com/maps/search/?api=1&query=Schlossplatz+Stuttgart"},{"name":"Staatsgalerie Stuttgart","maps":"https://www.google.com/maps/search/?api=1&query=Staatsgalerie+Stuttgart"},{"name":"Killesberg Park","maps":"https://www.google.com/maps/search/?api=1&query=Killesberg+Park+Stuttgart"}],"restaurants":[{"name":"Stuttgarter Weinstube","maps":"https://www.google.com/maps/search/?api=1&query=Stuttgarter+Weinstube"},{"name":"Cube Restaurant","maps":"https://www.google.com/maps/search/?api=1&query=Cube+Restaurant+Stuttgart"},{"name":"Wirtshaus Zum Besenbeizle","maps":"https://www.google.com/maps/search/?api=1&query=Besenbeizle+Stuttgart"},{"name":"Ochs'n Willi","maps":"https://www.google.com/maps/search/?api=1&query=Ochs+n+Willi+Stuttgart"},{"name":"Olivo Restaurant","maps":"https://www.google.com/maps/search/?api=1&query=Olivo+Restaurant+Stuttgart"}]},
+        {"city":"Essen","country":"Deutschland","flag":"🇩🇪","population":"595.000","description":"Essen is the cultural capital of the Ruhr region and one of Germany's most surprisingly green cities, with forests and parks covering around a third of its area. Its industrial past lives on at the UNESCO World Heritage Site Zollverein – a stunning Bauhaus coal mine complex that now houses museums, galleries and restaurants. World-class art at Museum Folkwang, the scenic Baldeneysee lake and the grand Villa Hügel mansion make Essen a destination that consistently exceeds expectations.","places":[{"name":"Zeche Zollverein (UNESCO)","maps":"https://www.google.com/maps/search/?api=1&query=Zeche+Zollverein+Essen"},{"name":"Museum Folkwang","maps":"https://www.google.com/maps/search/?api=1&query=Museum+Folkwang+Essen"},{"name":"Villa Hügel","maps":"https://www.google.com/maps/search/?api=1&query=Villa+Hügel+Essen"},{"name":"Baldeneysee","maps":"https://www.google.com/maps/search/?api=1&query=Baldeneysee+Essen"},{"name":"Grugapark","maps":"https://www.google.com/maps/search/?api=1&query=Grugapark+Essen"},{"name":"Red Dot Design Museum","maps":"https://www.google.com/maps/search/?api=1&query=Red+Dot+Design+Museum+Essen"}],"restaurants":[{"name":"Jagdhaus Schellenberg","maps":"https://www.google.com/maps/search/?api=1&query=Jagdhaus+Schellenberg+Essen"},{"name":"Casino Zollverein","maps":"https://www.google.com/maps/search/?api=1&query=Casino+Zollverein+Essen"},{"name":"Résidence","maps":"https://www.google.com/maps/search/?api=1&query=Résidence+Restaurant+Essen"},{"name":"Café Edda (Museum Folkwang)","maps":"https://www.google.com/maps/search/?api=1&query=Café+Edda+Museum+Folkwang+Essen"},{"name":"Hannappel","maps":"https://www.google.com/maps/search/?api=1&query=Hannappel+Restaurant+Essen"}]}
+      ];
+
+      // Build lookup: city name (lowercase) → data
+      const cityLookup = {};
+      CITY_DATA.forEach(c => { cityLookup[c.city.toLowerCase()] = c; });
+
+      // Also map activity strings → city keys for common variants
+      const cityAliases = {
+        "mg": "mönchengladbach",
+        "düsseldorf": "düsseldorf",
+        "koeln": "köln", "cologne": "köln",
+        "frankfurt": null, // not in data, skip
+      };
+
+      function getCityData(activityText, countryCode) {
+        const t = (activityText || '').toLowerCase();
+        // direct match
+        for (const key of Object.keys(cityLookup)) {
+          if (t.includes(key)) return cityLookup[key];
+        }
+        // alias match
+        for (const [alias, target] of Object.entries(cityAliases)) {
+          if (t.includes(alias) && target) return cityLookup[target];
+        }
+        return null;
+      }
+
+      const backdrop = document.getElementById('cityModalBackdrop');
+      const closeBtn = document.getElementById('cityModalClose');
+
+      function openCityModal(data) {
+        document.getElementById('cmFlag').textContent  = data.flag;
+        document.getElementById('cmName').textContent  = data.city;
+        document.getElementById('cmCountry').textContent = data.country;
+        document.getElementById('cmPop').textContent   = '👥 ' + data.population + ' Einwohner';
+        document.getElementById('cmDesc').textContent  = data.description;
+
+        const placesList = document.getElementById('cmPlaces');
+        placesList.innerHTML = data.places.map(p =>
+          `<li><a href="${p.maps}" target="_blank" rel="noopener" data-icon="📍">${p.name} ↗</a></li>`
+        ).join('');
+
+        const restList = document.getElementById('cmRests');
+        restList.innerHTML = data.restaurants.map(r =>
+          `<li><a href="${r.maps}" target="_blank" rel="noopener" data-icon="🍽️">${r.name} ↗</a></li>`
+        ).join('');
+
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        backdrop.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      closeBtn.addEventListener('click', closeModal);
+      backdrop.addEventListener('click', e => { if (e.target === backdrop) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+      // Delegate card clicks
+      document.getElementById('timeline').addEventListener('click', e => {
+        const card = e.target.closest('.day-card');
+        if (!card) return;
+        // don't trigger if clicking a link inside the card
+        if (e.target.closest('a')) return;
+        const activity = card.querySelector('.day-activity')?.textContent || '';
+        const country  = card.querySelector('.card-country-name')?.textContent || '';
+        const data = getCityData(activity, country);
+        if (data) openCityModal(data);
+      });
     </script>
   </body>
 </html>
