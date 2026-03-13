@@ -1305,6 +1305,316 @@
       <div class="scroll-hint">SCROLL</div>
     </section>
 
+    <!-- TRIP ANTHEM PLAYER -->
+    <div class="anthem-wrap" id="anthem-wrap">
+      <div class="anthem-glow"></div>
+      <div class="anthem-inner">
+        <div class="anthem-left">
+          <button class="anthem-btn" id="anthem-btn" aria-label="Play trip anthem">
+            <svg class="anthem-play-icon" id="anthem-play-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="6,3 20,12 6,21" fill="currentColor"/>
+            </svg>
+            <svg class="anthem-pause-icon" id="anthem-pause-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+              <rect x="5" y="3" width="4" height="18" rx="1" fill="currentColor"/>
+              <rect x="15" y="3" width="4" height="18" rx="1" fill="currentColor"/>
+            </svg>
+            <div class="anthem-ripple" id="anthem-ripple"></div>
+          </button>
+        </div>
+        <div class="anthem-center">
+          <div class="anthem-eyebrow">🎵 &nbsp; 100 days anthem</div>
+          <div class="anthem-title">Who’s gonna chicken out</div>
+          <div class="anthem-meta">by alifewayne &nbsp;·&nbsp; made with Suno AI</div>
+          <div class="anthem-progress-wrap">
+            <div class="anthem-progress-bg">
+              <div class="anthem-progress-bar" id="anthem-progress-bar"></div>
+            </div>
+            <div class="anthem-time">
+              <span id="anthem-cur">0:00</span>
+              <span id="anthem-dur">—</span>
+            </div>
+          </div>
+          <div class="anthem-bars" id="anthem-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <a class="anthem-suno-link" href="https://suno.com/song/37dbf9ad-2ce5-44a3-88a5-888efd8c37d2?sh=wBBx55XfdU4f1624" target="_blank" rel="noopener" title="Open on Suno">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+            <path d="M10 6H6C4.9 6 4 6.9 4 8v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-4M14 4h6m0 0v6m0-6L10 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+      <audio id="anthem-audio" preload="none" crossorigin="anonymous">
+        <source src="https://cdn1.suno.ai/37dbf9ad-2ce5-44a3-88a5-888efd8c37d2.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <style>
+      .anthem-wrap {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 0 1.5rem 3rem;
+        animation: heroFadeIn 1.5s 1.2s ease-out forwards;
+        opacity: 0;
+      }
+      .anthem-glow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 400px;
+        height: 80px;
+        background: radial-gradient(ellipse, rgba(240,192,64,0.12) 0%, transparent 70%);
+        pointer-events: none;
+        filter: blur(20px);
+        transition: opacity 0.4s;
+        opacity: 0;
+      }
+      .anthem-wrap.playing .anthem-glow {
+        opacity: 1;
+      }
+      .anthem-inner {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        background: rgba(255,255,255,0.035);
+        border: 1px solid rgba(240,192,64,0.18);
+        border-radius: 20px;
+        padding: 1rem 1.4rem 1rem 1rem;
+        width: min(580px, 100%);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 0 0 1px rgba(240,192,64,0.06), 0 8px 40px rgba(0,0,0,0.4);
+        transition: border-color 0.4s, box-shadow 0.4s;
+      }
+      .anthem-wrap.playing .anthem-inner {
+        border-color: rgba(240,192,64,0.38);
+        box-shadow: 0 0 0 1px rgba(240,192,64,0.12), 0 8px 40px rgba(0,0,0,0.4), 0 0 30px rgba(240,192,64,0.08);
+      }
+
+      /* Play button */
+      .anthem-btn {
+        flex-shrink: 0;
+        position: relative;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 2px solid rgba(240,192,64,0.5);
+        background: rgba(240,192,64,0.1);
+        color: var(--gold);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s, border-color 0.2s, transform 0.15s;
+        overflow: hidden;
+      }
+      .anthem-btn:hover {
+        background: rgba(240,192,64,0.2);
+        border-color: rgba(240,192,64,0.8);
+        transform: scale(1.06);
+      }
+      .anthem-btn:active { transform: scale(0.95); }
+      .anthem-play-icon, .anthem-pause-icon {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        z-index: 1;
+      }
+      .anthem-play-icon { margin-left: 2px; }
+      .anthem-ripple {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(240,192,64,0.3);
+        transform: scale(0);
+        opacity: 0;
+      }
+      .anthem-wrap.playing .anthem-ripple {
+        animation: anthemRipple 2s ease-out infinite;
+      }
+      @keyframes anthemRipple {
+        0%   { transform: scale(0.6); opacity: 0.6; }
+        100% { transform: scale(2.2); opacity: 0; }
+      }
+
+      /* Text info */
+      .anthem-center {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.18rem;
+      }
+      .anthem-eyebrow {
+        font-size: 0.48rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--mint);
+        opacity: 0.8;
+      }
+      .anthem-title {
+        font-family: "Outfit", sans-serif;
+        font-weight: 800;
+        font-size: clamp(1rem, 3vw, 1.4rem);
+        color: var(--gold);
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .anthem-meta {
+        font-size: 0.52rem;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+      }
+
+      /* Progress bar */
+      .anthem-progress-wrap {
+        margin-top: 0.5rem;
+      }
+      .anthem-progress-bg {
+        width: 100%;
+        height: 3px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .anthem-progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, var(--gold), var(--mint));
+        border-radius: 10px;
+        transition: width 0.3s linear;
+      }
+      .anthem-time {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.45rem;
+        letter-spacing: 0.1em;
+        color: var(--muted);
+        margin-top: 0.25rem;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Animated bars */
+      .anthem-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 14px;
+        margin-top: 0.3rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      .anthem-wrap.playing .anthem-bars { opacity: 1; }
+      .anthem-bars span {
+        display: block;
+        width: 3px;
+        background: linear-gradient(to top, var(--gold), var(--mint));
+        border-radius: 2px;
+        animation: anthemBar 0.8s ease-in-out infinite alternate;
+        height: 4px;
+      }
+      .anthem-bars span:nth-child(1)  { animation-delay: 0.0s; }
+      .anthem-bars span:nth-child(2)  { animation-delay: 0.1s; }
+      .anthem-bars span:nth-child(3)  { animation-delay: 0.2s; }
+      .anthem-bars span:nth-child(4)  { animation-delay: 0.05s; }
+      .anthem-bars span:nth-child(5)  { animation-delay: 0.15s; }
+      .anthem-bars span:nth-child(6)  { animation-delay: 0.25s; }
+      .anthem-bars span:nth-child(7)  { animation-delay: 0.08s; }
+      .anthem-bars span:nth-child(8)  { animation-delay: 0.18s; }
+      .anthem-bars span:nth-child(9)  { animation-delay: 0.12s; }
+      .anthem-bars span:nth-child(10) { animation-delay: 0.22s; }
+      @keyframes anthemBar {
+        from { height: 2px; }
+        to   { height: 14px; }
+      }
+
+      /* Suno link */
+      .anthem-suno-link {
+        flex-shrink: 0;
+        color: var(--muted);
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        padding: 0.4rem;
+      }
+      .anthem-suno-link:hover { color: var(--gold); }
+    </style>
+
+    <script>
+      (function() {
+        const audio   = document.getElementById('anthem-audio');
+        const btn     = document.getElementById('anthem-btn');
+        const wrap    = document.getElementById('anthem-wrap');
+        const playIco = document.getElementById('anthem-play-icon');
+        const pauseIco= document.getElementById('anthem-pause-icon');
+        const bar     = document.getElementById('anthem-progress-bar');
+        const cur     = document.getElementById('anthem-cur');
+        const dur     = document.getElementById('anthem-dur');
+        const progBg  = document.querySelector('.anthem-progress-bg');
+
+        function fmt(s) {
+          if (!isFinite(s)) return '—';
+          const m = Math.floor(s / 60);
+          const sec = Math.floor(s % 60);
+          return m + ':' + String(sec).padStart(2,'0');
+        }
+
+        btn.addEventListener('click', () => {
+          if (audio.paused) {
+            audio.play().catch(() => {});
+          } else {
+            audio.pause();
+          }
+        });
+
+        audio.addEventListener('play', () => {
+          wrap.classList.add('playing');
+          playIco.style.display = 'none';
+          pauseIco.style.display = '';
+        });
+
+        audio.addEventListener('pause', () => {
+          wrap.classList.remove('playing');
+          playIco.style.display = '';
+          pauseIco.style.display = 'none';
+        });
+
+        audio.addEventListener('ended', () => {
+          wrap.classList.remove('playing');
+          playIco.style.display = '';
+          pauseIco.style.display = 'none';
+          bar.style.width = '0%';
+          cur.textContent = '0:00';
+        });
+
+        audio.addEventListener('loadedmetadata', () => {
+          dur.textContent = fmt(audio.duration);
+        });
+
+        audio.addEventListener('timeupdate', () => {
+          if (!audio.duration) return;
+          const pct = (audio.currentTime / audio.duration) * 100;
+          bar.style.width = pct + '%';
+          cur.textContent = fmt(audio.currentTime);
+        });
+
+        progBg.addEventListener('click', (e) => {
+          if (!audio.duration) return;
+          const rect = progBg.getBoundingClientRect();
+          const pct = (e.clientX - rect.left) / rect.width;
+          audio.currentTime = pct * audio.duration;
+        });
+      })();
+    </script>
+
     <!-- FLIGHT PATH -->
     <div class="flight-intro">
       <div class="flight-track">
