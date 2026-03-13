@@ -1681,6 +1681,176 @@
       </p>
     </div>
 
+    <!-- TIME & WEATHER WIDGET -->
+    <div id="tw-widget" style="
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      padding: 1.2rem 1.5rem 0.8rem;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    ">
+
+      <!-- GERMANY -->
+      <div class="tw-card" id="tw-de">
+        <div class="tw-flag">🇩🇪</div>
+        <div class="tw-info">
+          <div class="tw-city">Düsseldorf</div>
+          <div class="tw-time" id="tw-time-de">--:--:--</div>
+          <div class="tw-weather" id="tw-weather-de">
+            <span class="tw-icon" id="tw-icon-de">·</span>
+            <span class="tw-temp" id="tw-temp-de">--°C</span>
+            <span class="tw-desc" id="tw-desc-de"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIVIDER -->
+      <div style="
+        width: 1px;
+        background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.08), transparent);
+        align-self: stretch;
+        margin: 0.2rem 0;
+      "></div>
+
+      <!-- THAILAND -->
+      <div class="tw-card" id="tw-th">
+        <div class="tw-flag">🇹🇭</div>
+        <div class="tw-info">
+          <div class="tw-city">Krabi</div>
+          <div class="tw-time" id="tw-time-th">--:--:--</div>
+          <div class="tw-weather" id="tw-weather-th">
+            <span class="tw-icon" id="tw-icon-th">·</span>
+            <span class="tw-temp" id="tw-temp-th">--°C</span>
+            <span class="tw-desc" id="tw-desc-th"></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <style>
+      .tw-card {
+        display: flex;
+        align-items: center;
+        gap: 1.3rem;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 20px;
+        padding: 1.3rem 1.8rem;
+        backdrop-filter: blur(10px);
+        min-width: 240px;
+        transition: border-color 0.3s;
+      }
+      .tw-card:hover {
+        border-color: rgba(255,255,255,0.12);
+      }
+      .tw-flag {
+        font-size: 3.2rem;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .tw-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .tw-city {
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .tw-time {
+        font-family: 'Space Mono', monospace;
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: 0.04em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+      .tw-weather {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-top: 0.15rem;
+      }
+      .tw-icon { font-size: 1.4rem; line-height: 1; }
+      .tw-temp {
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .tw-desc {
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        opacity: 0.5;
+        text-transform: capitalize;
+        color: var(--muted);
+      }
+    </style>
+
+    <script>
+      // ── Clocks ──
+      function updateClocks() {
+        const nowDE = new Date().toLocaleTimeString('de-DE', { timeZone: 'Europe/Berlin', hour12: false });
+        const nowTH = new Date().toLocaleTimeString('de-DE', { timeZone: 'Asia/Bangkok', hour12: false });
+        document.getElementById('tw-time-de').textContent = nowDE;
+        document.getElementById('tw-time-th').textContent = nowTH;
+      }
+      updateClocks();
+      setInterval(updateClocks, 1000);
+
+      // ── Weather via Open-Meteo (free, no key) ──
+      async function fetchWeather(lat, lon, tempId, iconId, descId) {
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&timezone=auto`;
+          const r = await fetch(url);
+          const d = await r.json();
+          const temp = Math.round(d.current.temperature_2m);
+          const code = d.current.weathercode;
+          document.getElementById(tempId).textContent = temp + '°C';
+          document.getElementById(iconId).textContent = wmoIcon(code);
+          document.getElementById(descId).textContent = wmoDesc(code);
+        } catch(e) {}
+      }
+
+      function wmoIcon(c) {
+        if (c === 0) return '☀️';
+        if (c <= 2) return '🌤️';
+        if (c === 3) return '☁️';
+        if (c <= 49) return '🌫️';
+        if (c <= 59) return '🌦️';
+        if (c <= 69) return '🌧️';
+        if (c <= 79) return '🌨️';
+        if (c <= 82) return '🌧️';
+        if (c <= 99) return '⛈️';
+        return '🌡️';
+      }
+      function wmoDesc(c) {
+        if (c === 0) return 'Clear sky';
+        if (c === 1) return 'Mainly clear';
+        if (c === 2) return 'Partly cloudy';
+        if (c === 3) return 'Overcast';
+        if (c <= 49) return 'Foggy';
+        if (c <= 59) return 'Drizzle';
+        if (c <= 69) return 'Rain';
+        if (c <= 79) return 'Snow';
+        if (c <= 82) return 'Rain showers';
+        if (c <= 99) return 'Thunderstorm';
+        return '';
+      }
+
+      // Düsseldorf & Krabi coords
+      fetchWeather(51.2217, 6.7762, 'tw-temp-de', 'tw-icon-de', 'tw-desc-de');
+      fetchWeather(8.0863, 98.9063, 'tw-temp-th', 'tw-icon-th', 'tw-desc-th');
+    </script>
+
     <!-- ARRIVAL -->
     <div
       class="arrival-banner"
