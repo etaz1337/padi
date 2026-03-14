@@ -1694,15 +1694,21 @@
 
       <!-- GERMANY -->
       <div class="tw-card" id="tw-de">
-        <div class="tw-flag">🇩🇪</div>
         <div class="tw-info">
-          <div class="tw-city">Düsseldorf</div>
+          <div class="tw-city-row">
+            <span class="tw-flag">🇩🇪</span>
+            <span class="tw-city">Düsseldorf</span>
+          </div>
           <div class="tw-time" id="tw-time-de">--:--:--</div>
           <div class="tw-weather" id="tw-weather-de">
             <span class="tw-icon" id="tw-icon-de">·</span>
             <span class="tw-temp" id="tw-temp-de">--°C</span>
             <span class="tw-desc" id="tw-desc-de"></span>
           </div>
+          <button class="tw-forecast-toggle" id="tw-toggle-de" onclick="toggleForecast('de')" aria-expanded="false">
+            5-day forecast <span class="tw-chevron">▾</span>
+          </button>
+          <div class="tw-forecast-panel" id="tw-forecast-de"></div>
         </div>
       </div>
 
@@ -1716,15 +1722,21 @@
 
       <!-- THAILAND -->
       <div class="tw-card" id="tw-th">
-        <div class="tw-flag">🇹🇭</div>
         <div class="tw-info">
-          <div class="tw-city">Krabi</div>
+          <div class="tw-city-row">
+            <span class="tw-flag">🇹🇭</span>
+            <span class="tw-city">Krabi</span>
+          </div>
           <div class="tw-time" id="tw-time-th">--:--:--</div>
           <div class="tw-weather" id="tw-weather-th">
             <span class="tw-icon" id="tw-icon-th">·</span>
             <span class="tw-temp" id="tw-temp-th">--°C</span>
             <span class="tw-desc" id="tw-desc-th"></span>
           </div>
+          <button class="tw-forecast-toggle" id="tw-toggle-th" onclick="toggleForecast('th')" aria-expanded="false">
+            5-day forecast <span class="tw-chevron">▾</span>
+          </button>
+          <div class="tw-forecast-panel" id="tw-forecast-th"></div>
         </div>
       </div>
 
@@ -1733,40 +1745,48 @@
     <style>
       .tw-card {
         display: flex;
-        align-items: center;
-        gap: 1.3rem;
+        flex-direction: column;
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.06);
-        border-radius: 20px;
-        padding: 1.3rem 1.8rem;
+        border-radius: 24px;
+        padding: 1.6rem 2rem;
         backdrop-filter: blur(10px);
-        min-width: 240px;
+        min-width: 300px;
+        width: 100%;
+        max-width: 380px;
         transition: border-color 0.3s;
       }
       .tw-card:hover {
         border-color: rgba(255,255,255,0.12);
       }
+      .tw-city-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.1rem;
+      }
       .tw-flag {
-        font-size: 3.2rem;
+        font-size: 1.1rem;
         line-height: 1;
         flex-shrink: 0;
       }
       .tw-info {
         display: flex;
         flex-direction: column;
-        gap: 0.3rem;
+        gap: 0.35rem;
+        width: 100%;
       }
       .tw-city {
         font-family: 'Outfit', sans-serif;
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.25em;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
         text-transform: uppercase;
         color: var(--muted);
       }
       .tw-time {
         font-family: 'Space Mono', monospace;
-        font-size: 1.9rem;
+        font-size: 2.4rem;
         font-weight: 700;
         color: var(--text);
         letter-spacing: 0.04em;
@@ -1776,22 +1796,129 @@
       .tw-weather {
         display: flex;
         align-items: center;
-        gap: 0.4rem;
-        margin-top: 0.15rem;
+        gap: 0.5rem;
+        margin-top: 0.2rem;
       }
-      .tw-icon { font-size: 1.4rem; line-height: 1; }
+      .tw-icon { font-size: 1.8rem; line-height: 1; }
       .tw-temp {
         font-family: 'Outfit', sans-serif;
-        font-size: 1.2rem;
+        font-size: 1.6rem;
         font-weight: 700;
         color: var(--text);
       }
       .tw-desc {
-        font-size: 0.6rem;
+        font-size: 0.72rem;
         letter-spacing: 0.1em;
         opacity: 0.5;
         text-transform: capitalize;
         color: var(--muted);
+      }
+
+      /* Forecast toggle button */
+      .tw-forecast-toggle {
+        margin-top: 0.9rem;
+        background: none;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        color: var(--muted);
+        font-family: 'Space Mono', monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 0.6rem 1.3rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        transition: border-color 0.2s, color 0.2s, background 0.2s;
+        width: 100%;
+      }
+      .tw-forecast-toggle:hover {
+        border-color: rgba(240,192,64,0.35);
+        color: var(--gold);
+        background: rgba(240,192,64,0.05);
+      }
+      .tw-forecast-toggle[aria-expanded="true"] {
+        border-color: rgba(240,192,64,0.3);
+        color: var(--gold);
+      }
+      .tw-chevron {
+        display: inline-block;
+        transition: transform 0.25s ease;
+        font-size: 0.85rem;
+        line-height: 1;
+      }
+      .tw-forecast-toggle[aria-expanded="true"] .tw-chevron {
+        transform: rotate(180deg);
+      }
+
+      /* Forecast panel */
+      .tw-forecast-panel {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+      }
+      .tw-forecast-panel.open {
+        max-height: 400px;
+        opacity: 1;
+      }
+      .tw-forecast-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.8rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255,255,255,0.06);
+        min-width: 240px;
+      }
+      .tw-fc-row {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        font-size: 0.75rem;
+      }
+      .tw-fc-day {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600;
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        width: 36px;
+        flex-shrink: 0;
+      }
+      .tw-fc-icon { font-size: 1.3rem; line-height: 1; flex-shrink: 0; }
+      .tw-fc-bar-wrap {
+        flex: 1;
+        height: 4px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .tw-fc-bar {
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(90deg, var(--mint), var(--gold));
+        transition: width 0.6s ease;
+      }
+      .tw-fc-temps {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0;
+        font-variant-numeric: tabular-nums;
+      }
+      .tw-fc-hi {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 0.82rem;
+        color: var(--text);
+      }
+      .tw-fc-lo {
+        font-family: 'Space Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--muted);
+        opacity: 0.6;
       }
     </style>
 
@@ -1807,16 +1934,51 @@
       setInterval(updateClocks, 1000);
 
       // ── Weather via Open-Meteo (free, no key) ──
-      async function fetchWeather(lat, lon, tempId, iconId, descId) {
+      async function fetchWeather(lat, lon, tempId, iconId, descId, forecastId) {
         try {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&timezone=auto`;
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=6`;
           const r = await fetch(url);
           const d = await r.json();
+
+          // Current
           const temp = Math.round(d.current.temperature_2m);
           const code = d.current.weathercode;
           document.getElementById(tempId).textContent = temp + '°C';
           document.getElementById(iconId).textContent = wmoIcon(code);
           document.getElementById(descId).textContent = wmoDesc(code);
+
+          // 5-day forecast (skip index 0 = today)
+          const panel = document.getElementById(forecastId);
+          const days = d.daily;
+          const allMax = days.temperature_2m_max.slice(1, 6);
+          const allMin = days.temperature_2m_min.slice(1, 6);
+          const globalMax = Math.max(...allMax);
+          const globalMin = Math.min(...allMin);
+          const range = globalMax - globalMin || 1;
+
+          let html = '<div class="tw-forecast-rows">';
+          for (let i = 1; i <= 5; i++) {
+            const date = new Date(days.time[i] + 'T12:00:00');
+            const dayName = date.toLocaleDateString('en-GB', { weekday: 'short' });
+            const icon = wmoIcon(days.weathercode[i]);
+            const hi = Math.round(days.temperature_2m_max[i]);
+            const lo = Math.round(days.temperature_2m_min[i]);
+            const barPct = Math.round(((hi - globalMin) / range) * 100);
+            html += `
+              <div class="tw-fc-row">
+                <span class="tw-fc-day">${dayName}</span>
+                <span class="tw-fc-icon">${icon}</span>
+                <div class="tw-fc-bar-wrap">
+                  <div class="tw-fc-bar" style="width:${barPct}%"></div>
+                </div>
+                <div class="tw-fc-temps">
+                  <span class="tw-fc-hi">${hi}°</span>
+                  <span class="tw-fc-lo">${lo}°</span>
+                </div>
+              </div>`;
+          }
+          html += '</div>';
+          panel.innerHTML = html;
         } catch(e) {}
       }
 
@@ -1846,9 +2008,17 @@
         return '';
       }
 
+      function toggleForecast(id) {
+        const panel = document.getElementById('tw-forecast-' + id);
+        const btn   = document.getElementById('tw-toggle-' + id);
+        const isOpen = panel.classList.contains('open');
+        panel.classList.toggle('open', !isOpen);
+        btn.setAttribute('aria-expanded', String(!isOpen));
+      }
+
       // Düsseldorf & Krabi coords
-      fetchWeather(51.2217, 6.7762, 'tw-temp-de', 'tw-icon-de', 'tw-desc-de');
-      fetchWeather(8.0863, 98.9063, 'tw-temp-th', 'tw-icon-th', 'tw-desc-th');
+      fetchWeather(51.2217, 6.7762, 'tw-temp-de', 'tw-icon-de', 'tw-desc-de', 'tw-forecast-de');
+      fetchWeather(8.0863, 98.9063, 'tw-temp-th', 'tw-icon-th', 'tw-desc-th', 'tw-forecast-th');
     </script>
 
     <!-- ARRIVAL -->
